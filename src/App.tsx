@@ -1,6 +1,5 @@
 import React, { useEffect } from "react"
 import { useState } from "react"
-import logo from "./logo.svg"
 import "./App.css"
 
 import type { IWalletConfig, IWalletHandler } from "@jackallabs/jackal.js"
@@ -8,12 +7,9 @@ import { WalletHandler } from "@jackallabs/jackal.js"
 
 import { testnet } from "./config"
 
-// let walletHandler: IWalletHandler
-
-// WalletHandler.trackWallet(walletConfig).then((e) => (walletHandler = e))
-
 function App() {
 	const [walletHandler, setWalletHandler] = useState<IWalletHandler>()
+	const [JKLBalance, setJKLBalance] = useState<string>()
 
 	const initWallet = async () => {
 		const walletConfig: IWalletConfig = {
@@ -29,29 +25,33 @@ function App() {
 			initWallet()
 		}
 		let balance = await walletHandler?.getJackalBalance()
-		console.log(balance)
+		setJKLBalance(balance?.amount)
 	}
-
 	useEffect(() => {
-		console.log("hello")
-		getBalance()
-	}, [])
+		console.log("useEffect...")
+	}, [JKLBalance])
+
 	return (
 		<div className='App'>
-			<header className='App-header'>
-				<img src={logo} className='App-logo' alt='logo' />
-				<p>
-					Edit <code>src/App.tsx</code> and save to reload.
-				</p>
-				<a
-					className='App-link'
-					href='https://reactjs.org'
-					target='_blank'
-					rel='noopener noreferrer'
-				>
-					Learn React
-				</a>
-			</header>
+			<div className='header'>
+				<h1>Radiant Uploader</h1>
+				<div>
+					<button onClick={getBalance}>Connect</button>
+					<p className='header'>JKL Balance: {JKLBalance}</p>
+				</div>
+			</div>
+
+			<div className='main-body'>
+				<div className='left'>
+					<p>[INSERT ICON]</p>
+					<p>Drag and drop file or folder</p>
+					<button>BROWSE FILES</button>
+				</div>
+				<div className='right'>
+					<div className='nav-bar'>/Home</div>
+					<div className='file-manager'>File Manager </div>
+				</div>
+			</div>
 		</div>
 	)
 }
