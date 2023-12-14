@@ -2,14 +2,11 @@ import React, { useEffect, useRef } from "react"
 import { useState } from "react"
 import "./App.css"
 
-import type {
-	IWalletConfig,
-	IWalletHandler,
-	IFileIo
-} from "@jackallabs/jackal.js"
+import type { IWalletConfig, IWalletHandler } from "@jackallabs/jackal.js"
 import { WalletHandler, FileIo, getFileTreeData } from "@jackallabs/jackal.js"
 
 import { testnet } from "./config"
+import { getFilesAsync, isDirectory, isFile } from "./utils"
 
 type FileData = {
 	name: string
@@ -27,6 +24,7 @@ function App() {
 	const [fileIo, setFileIo] = useState<FileIo | null>(null)
 	const [data, setData] = useState<FileData[]>([])
 	const [selectedFiles, setSelectedFiles] = useState<File[]>([])
+	const [inDropZone, setInDropZone] = useState<boolean>(false)
 
 	const initWallet = async () => {
 		setLoading(true)
@@ -108,6 +106,39 @@ function App() {
 		setSelectedFiles(selected)
 	}
 
+	//Drag n Drop
+	const handleDragEnter = (e: any) => {
+		e.preventDefault()
+		e.stopPropagation()
+	}
+	const handleDragLeave = (e: any) => {
+		e.preventDefault()
+		e.stopPropagation()
+		setInDropZone(false)
+	}
+	const handleDragOver = (e: any) => {
+		e.preventDefault()
+		e.stopPropagation()
+		setInDropZone(true)
+	}
+	const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
+		e.preventDefault()
+		e.stopPropagation()
+		setInDropZone(false)
+
+		if (e.dataTransfer?.files[0].type === "") {
+			// let's assume a file with empty type means a folder
+			console.log("folder")
+			let filesAndFolders = await getFilesAsync(e.dataTransfer)
+			setSelectedFiles(filesAndFolders)
+		} else {
+			console.log("file")
+			let files = e.dataTransfer?.files || []
+			let selected = Array.from(files)
+			setSelectedFiles(selected)
+		}
+	}
+
 	useEffect(() => {
 		console.log("useEffect...")
 	}, [JKLBalance])
@@ -123,14 +154,41 @@ function App() {
 					>
 						{walletActive ? "Connected" : "Connect Wallet"}
 					</button>
-					<button onClick={updateFileList}>Update File List</button>
+					<button
+						onClick={(e) => {
+							console.log(selectedFiles)
+						}}
+					>
+						Test Button
+					</button>
 					<p className='header'>JKL Balance: {JKLBalance}</p>
 				</div>
 			</div>
 			{loading && <h2>LOADING...</h2>}
 			<div className='main-body'>
 				{/* LEFT */}
-				<div className='left'>
+				<div
+					className={
+						inDropZone
+							? "left drag-drop-zone inside-drag-area"
+							: "left drag-drop-zone"
+					}
+					onDrop={(e) => handleDrop(e)}
+					onDragOver={(e) => handleDragOver(e)}
+					onDragEnter={(e) => handleDragEnter(e)}
+					onDragLeave={(e) => handleDragLeave(e)}
+				>
+					{selectedFiles.length > 0 && (
+						<>
+							<div className='uploading-queue'>
+								<h3>Uploading queue:</h3>
+								{selectedFiles.map((e, i) => (
+									<li key={i}> {e.name}</li>
+								))}
+							</div>
+							<button>Upload</button>
+						</>
+					)}
 					<p>[INSERT ICON]</p>
 					<p>Drag and drop file or folder</p>
 					<button onClick={browseFilesButtonClick}>BROWSE FILES</button>
@@ -142,12 +200,6 @@ function App() {
 						multiple
 						onChange={handleFileChange}
 					/>
-					<div>
-						Uploading queue:
-						{selectedFiles.map((e, i) => (
-							<p> - {e.name}</p>
-						))}
-					</div>
 				</div>
 
 				{/* RIGHT */}
