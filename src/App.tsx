@@ -2,11 +2,20 @@ import React, { useEffect, useRef } from "react"
 import { useState } from "react"
 import "./App.css"
 
-import type { IWalletConfig, IWalletHandler } from "@jackallabs/jackal.js"
-import { WalletHandler, FileIo, getFileTreeData } from "@jackallabs/jackal.js"
+import type {
+	IWalletConfig,
+	IWalletHandler,
+	IUploadList
+} from "@jackallabs/jackal.js"
+import {
+	WalletHandler,
+	FileIo,
+	getFileTreeData,
+	FileUploadHandler
+} from "@jackallabs/jackal.js"
 
 import { testnet } from "./config"
-import { getFilesAsync, isDirectory, isFile } from "./utils"
+import { getFilesAsync } from "./utils"
 
 type FileData = {
 	name: string
@@ -18,8 +27,9 @@ const path = "radiant"
 
 function App() {
 	const [loading, setLoading] = useState<boolean>(false)
-	const [wallet, setWallet] = useState<IWalletHandler>()
+	const [wallet, setWallet] = useState<IWalletHandler | null>(null)
 	const [JKLBalance, setJKLBalance] = useState<number>(0)
+	const [JKLAddress, setJKLAddress] = useState<string>("")
 	const [walletActive, setWalletActive] = useState<boolean>(false)
 	const [fileIo, setFileIo] = useState<FileIo | null>(null)
 	const [data, setData] = useState<FileData[]>([])
@@ -35,23 +45,28 @@ function App() {
 		let trackWallet = await WalletHandler.trackWallet(walletConfig)
 		setWallet(trackWallet)
 
-		let balance = await trackWallet.getJackalBalance()
-		setJKLBalance(parseInt(balance.amount) / 1000000)
+		let jklAddress = await trackWallet.getJackalAddress()
+		setJKLAddress(jklAddress)
 
 		let trackIo = await FileIo.trackIo(trackWallet, ioVersion)
 		setFileIo(trackIo)
 
-		const listOfFolders = [path, "memes"]
+		const listOfFolders = [path]
 
 		// If folder doesn't exist, create folder
 		await trackIo.verifyFoldersExist(listOfFolders)
 
 		updateFileList()
+		updateBalance(trackWallet)
 
 		setWalletActive(true)
 		setLoading(false)
 	}
 
+	const updateBalance = async (wallet: IWalletHandler) => {
+		let balance = await wallet?.getJackalBalance()
+		setJKLBalance(parseInt(balance?.amount || "0") / 1000000)
+	}
 	const updateFileList = async () => {
 		if (fileIo == null) {
 			return
@@ -84,9 +99,81 @@ function App() {
 			d[x] = { name: key, fid: newFid }
 			x++
 		}
-		console.log(d)
 		setData(d)
 	}
+
+	const complete = () => {
+		setLoading(false)
+	}
+	const uploadFile = (file: File) => {
+		if (JKLBalance == 0) {
+			alert("You don't have enough JKL")
+			return null
+		}
+		setLoading(true)
+
+		const fileName = file.name
+		if (fileName.length == 0) {
+			alert("file needs name")
+			complete()
+			return
+		}
+
+		const parentFolderPath = "s/" + path
+
+		FileUploadHandler.trackFile(file, parentFolderPath)
+			.then((handler) => {
+				fileIo
+					?.downloadFolder(parentFolderPath)
+					.then((parent) => {
+						const uploadList: IUploadList = {}
+						uploadList[fileName] = {
+							data: null,
+							exists: false,
+							handler: handler,
+							key: fileName,
+							uploadable: handler.getForPublicUpload()
+						}
+
+						fileIo
+							?.staggeredUploadFiles(uploadList, parent, {
+								complete: 0,
+								timer: 0
+							})
+							.then(() => {
+								if (wallet == null) {
+									complete()
+									return
+								}
+
+								getFileTreeData(
+									"s/" + path + "/" + fileName,
+									wallet.getJackalAddress(),
+									wallet.getQueryHandler()
+								)
+									.then((f) => {
+										const fFiles = f.value.files
+										if (fFiles == null) {
+											complete()
+											return
+										}
+										const fidList = JSON.parse(fFiles.contents)
+										const newFid = fidList.fids[0]
+										console.log(newFid)
+
+										updateFileList()
+										complete()
+									})
+									.catch(complete)
+							})
+							.catch(complete)
+					})
+					.catch(complete)
+			})
+			.catch(complete)
+	}
+
+	const checkStoragePlan = () => {}
 
 	const connectButtonClick = async () => {
 		await initWallet()
@@ -104,6 +191,28 @@ function App() {
 		let files = e.target.files || []
 		let selected = Array.from(files)
 		setSelectedFiles(selected)
+	}
+	const uploadButtonClick = () => {
+		console.log("uploading...", selectedFiles[0].name)
+		uploadFile(selectedFiles[0])
+	}
+
+	const openFile = (fileName: string) => {
+		if (wallet == null) {
+			return
+		}
+		const link =
+			"https://jackal.link/p/" +
+			wallet.getJackalAddress() +
+			"/" +
+			path +
+			"/" +
+			fileName
+		const w = window.open(link, "_blank")
+		if (w == null) {
+			return
+		}
+		w.focus()
 	}
 
 	//Drag n Drop
@@ -141,7 +250,13 @@ function App() {
 
 	useEffect(() => {
 		console.log("useEffect...")
-	}, [JKLBalance])
+	}, [JKLBalance, data])
+
+	const testFunction = async () => {
+		const parentFolderPath = "s/" + path
+		console.log("test btn clicked")
+		updateFileList()
+	}
 
 	return (
 		<div className='App'>
@@ -156,12 +271,12 @@ function App() {
 					</button>
 					<button
 						onClick={(e) => {
-							console.log(selectedFiles)
+							testFunction()
 						}}
 					>
 						Test Button
 					</button>
-					<p className='header'>JKL Balance: {JKLBalance}</p>
+					{walletActive && <p className='header'>JKL Balance: {JKLBalance}</p>}
 				</div>
 			</div>
 			{loading && <h2>LOADING...</h2>}
@@ -186,7 +301,7 @@ function App() {
 									<li key={i}> {e.name}</li>
 								))}
 							</div>
-							<button>Upload</button>
+							<button onClick={uploadButtonClick}>Upload</button>
 						</>
 					)}
 					<p>[INSERT ICON]</p>
@@ -205,7 +320,18 @@ function App() {
 				{/* RIGHT */}
 				<div className='right'>
 					<div className='nav-bar'>/Home</div>
-					<div className='file-manager'>File Manager </div>
+					<div className='file-manager'>
+						<h3>File Manager</h3>
+						{data.map((e, i) => (
+							<>
+								<li key={i}>
+									{e.name}
+									{"    "}
+									<button onClick={() => openFile(e.name)}>View online</button>
+								</li>
+							</>
+						))}
+					</div>
 				</div>
 			</div>
 		</div>
