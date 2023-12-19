@@ -1,11 +1,12 @@
-import React, { useEffect, useRef } from "react"
+import React, { useEffect, useRef, useMemo } from "react"
 import { useState } from "react"
 import "./App.css"
 
 import type {
 	IWalletConfig,
 	IWalletHandler,
-	IUploadList
+	IUploadList,
+	IFolderHandler
 } from "@jackallabs/jackal.js"
 import {
 	WalletHandler,
@@ -27,6 +28,7 @@ const path = "radiant"
 
 function App() {
 	const [loading, setLoading] = useState<boolean>(false)
+	const [uploading, setUploading] = useState<boolean>(false)
 	const [wallet, setWallet] = useState<IWalletHandler | null>(null)
 	const [JKLBalance, setJKLBalance] = useState<number>(0)
 	const [JKLAddress, setJKLAddress] = useState<string>("")
@@ -35,6 +37,7 @@ function App() {
 	const [data, setData] = useState<FileData[]>([])
 	const [selectedFiles, setSelectedFiles] = useState<File[]>([])
 	const [inDropZone, setInDropZone] = useState<boolean>(false)
+	const [currentDir, setCurrentDir] = useState<IFolderHandler | null>(null)
 
 	const initWallet = async () => {
 		setLoading(true)
@@ -56,8 +59,8 @@ function App() {
 		// If folder doesn't exist, create folder
 		await trackIo.verifyFoldersExist(listOfFolders)
 
-		updateFileList()
-		updateBalance(trackWallet)
+		await updateFileList(trackWallet, trackIo)
+		await updateBalance(trackWallet)
 
 		setWalletActive(true)
 		setLoading(false)
@@ -67,15 +70,16 @@ function App() {
 		let balance = await wallet?.getJackalBalance()
 		setJKLBalance(parseInt(balance?.amount || "0") / 1000000)
 	}
-	const updateFileList = async () => {
+	const updateFileList = async (wallet: IWalletHandler, fileIo: FileIo) => {
 		if (fileIo == null) {
 			return
 		}
 		if (wallet == null) {
 			return
 		}
-		const listFiles = await fileIo.downloadFolder("s/" + path)
-		const files = listFiles.getFolderDetails().fileChildren
+		const folder = await fileIo.downloadFolder("s/" + path)
+		setCurrentDir(folder)
+		const files = folder.getFolderDetails().fileChildren
 
 		let d = []
 
@@ -88,7 +92,6 @@ function App() {
 				wallet.getJackalAddress(),
 				wallet.getQueryHandler()
 			)
-			console.log("fdetails", fDetails)
 			const dFiles = fDetails.value.files
 			if (dFiles == null) {
 				continue
@@ -103,77 +106,42 @@ function App() {
 	}
 
 	const complete = () => {
-		setLoading(false)
+		setUploading(false)
 	}
-	const uploadFile = (file: File) => {
-		if (JKLBalance == 0) {
+	const handleUpload = async (files: File[]) => {
+		if (JKLBalance === 0) {
 			alert("You don't have enough JKL")
 			return null
 		}
-		setLoading(true)
 
-		const fileName = file.name
-		if (fileName.length == 0) {
-			alert("file needs name")
-			complete()
-			return
-		}
-
+		setUploading(true)
 		const parentFolderPath = "s/" + path
+		let uploadList: IUploadList = {}
 
-		FileUploadHandler.trackFile(file, parentFolderPath)
-			.then((handler) => {
-				fileIo
-					?.downloadFolder(parentFolderPath)
-					.then((parent) => {
-						const uploadList: IUploadList = {}
-						uploadList[fileName] = {
-							data: null,
-							exists: false,
-							handler: handler,
-							key: fileName,
-							uploadable: handler.getForPublicUpload()
-						}
-
-						fileIo
-							?.staggeredUploadFiles(uploadList, parent, {
-								complete: 0,
-								timer: 0
-							})
-							.then(() => {
-								if (wallet == null) {
-									complete()
-									return
-								}
-
-								getFileTreeData(
-									"s/" + path + "/" + fileName,
-									wallet.getJackalAddress(),
-									wallet.getQueryHandler()
-								)
-									.then((f) => {
-										const fFiles = f.value.files
-										if (fFiles == null) {
-											complete()
-											return
-										}
-										const fidList = JSON.parse(fFiles.contents)
-										const newFid = fidList.fids[0]
-										console.log(newFid)
-
-										updateFileList()
-										complete()
-									})
-									.catch(complete)
-							})
-							.catch(complete)
-					})
-					.catch(complete)
+		await Promise.all(
+			files.map(async (file) => {
+				let handler = await FileUploadHandler.trackFile(file, parentFolderPath)
+				uploadList[file.name] = {
+					data: null,
+					exists: false,
+					handler: handler,
+					key: file.name,
+					uploadable: handler.getForPublicUpload()
+				}
 			})
-			.catch(complete)
+		)
+		currentDir &&
+			(await fileIo
+				?.staggeredUploadFiles(uploadList, currentDir, {
+					complete: 0,
+					timer: 0
+				})
+				.catch((err) => {
+					console.log(err)
+					console.log("upload failed")
+				}))
+		complete()
 	}
-
-	const checkStoragePlan = () => {}
 
 	const connectButtonClick = async () => {
 		await initWallet()
@@ -193,8 +161,7 @@ function App() {
 		setSelectedFiles(selected)
 	}
 	const uploadButtonClick = () => {
-		console.log("uploading...", selectedFiles[0].name)
-		uploadFile(selectedFiles[0])
+		handleUpload(selectedFiles)
 	}
 
 	const openFile = (fileName: string) => {
@@ -202,7 +169,7 @@ function App() {
 			return
 		}
 		const link =
-			"https://jackal.link/p/" +
+			"https://testnet.jackal.link/p/" +
 			wallet.getJackalAddress() +
 			"/" +
 			path +
@@ -237,11 +204,9 @@ function App() {
 
 		if (e.dataTransfer?.files[0].type === "") {
 			// let's assume a file with empty type means a folder
-			console.log("folder")
 			let filesAndFolders = await getFilesAsync(e.dataTransfer)
 			setSelectedFiles(filesAndFolders)
 		} else {
-			console.log("file")
 			let files = e.dataTransfer?.files || []
 			let selected = Array.from(files)
 			setSelectedFiles(selected)
@@ -250,12 +215,16 @@ function App() {
 
 	useEffect(() => {
 		console.log("useEffect...")
-	}, [JKLBalance, data])
+	}, [])
+
+	useMemo(() => {
+		console.log("useMemo...")
+		wallet && fileIo && updateFileList(wallet, fileIo)
+	}, [wallet, fileIo])
 
 	const testFunction = async () => {
-		const parentFolderPath = "s/" + path
+		// const parentFolderPath = "s/" + path
 		console.log("test btn clicked")
-		updateFileList()
 	}
 
 	return (
@@ -293,6 +262,7 @@ function App() {
 					onDragEnter={(e) => handleDragEnter(e)}
 					onDragLeave={(e) => handleDragLeave(e)}
 				>
+					{uploading && <h2>Uploading in progress...</h2>}
 					{selectedFiles.length > 0 && (
 						<>
 							<div className='uploading-queue'>
@@ -321,15 +291,16 @@ function App() {
 				<div className='right'>
 					<div className='nav-bar'>/Home</div>
 					<div className='file-manager'>
+						<h3>Folders</h3>
 						<h3>File Manager</h3>
 						{data.map((e, i) => (
-							<>
+							<div className='files'>
 								<li key={i}>
 									{e.name}
 									{"    "}
 									<button onClick={() => openFile(e.name)}>View online</button>
 								</li>
-							</>
+							</div>
 						))}
 					</div>
 				</div>
