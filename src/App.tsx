@@ -2,6 +2,10 @@ import React, { useEffect, useRef, useMemo } from "react"
 import { useState } from "react"
 import "./App.css"
 
+import { ReactComponent as UploadIcon } from "./assets/upload-icon.svg"
+import { ReactComponent as FileIcon } from "./assets/file-icon.svg"
+import { ReactComponent as FolderIcon } from "./assets/folder-icon.svg"
+
 import type {
 	IWalletConfig,
 	IWalletHandler,
@@ -12,7 +16,8 @@ import {
 	WalletHandler,
 	FileIo,
 	getFileTreeData,
-	FileUploadHandler
+	FileUploadHandler,
+	FolderHandler
 } from "@jackallabs/jackal.js"
 
 import { testnet } from "./config"
@@ -35,6 +40,7 @@ function App() {
 	const [walletActive, setWalletActive] = useState<boolean>(false)
 	const [fileIo, setFileIo] = useState<FileIo | null>(null)
 	const [data, setData] = useState<FileData[]>([])
+	const [folders, setFolders] = useState<string[]>([])
 	const [selectedFiles, setSelectedFiles] = useState<File[]>([])
 	const [inDropZone, setInDropZone] = useState<boolean>(false)
 	const [currentDir, setCurrentDir] = useState<IFolderHandler | null>(null)
@@ -79,6 +85,7 @@ function App() {
 		}
 		const folder = await fileIo.downloadFolder("s/" + path)
 		setCurrentDir(folder)
+		setFolders(folder.getChildDirs())
 		const files = folder.getFolderDetails().fileChildren
 
 		let d = []
@@ -140,6 +147,8 @@ function App() {
 					console.log(err)
 					console.log("upload failed")
 				}))
+
+		wallet && fileIo && updateFileList(wallet, fileIo)
 		complete()
 	}
 
@@ -213,26 +222,32 @@ function App() {
 		}
 	}
 
-	useEffect(() => {
-		console.log("useEffect...")
-	}, [])
+	// useEffect(() => {
+	// 	console.log("useEffect...")
+	// }, [])
 
 	useMemo(() => {
 		console.log("useMemo...")
 		wallet && fileIo && updateFileList(wallet, fileIo)
+		console.log("currentDir:", currentDir)
 	}, [wallet, fileIo])
 
 	const testFunction = async () => {
 		// const parentFolderPath = "s/" + path
 		console.log("test btn clicked")
+		folders.map((e) => console.log(e))
 	}
 
 	return (
 		<div className='App'>
 			<div className='header'>
-				<h1>Radiant Uploader</h1>
+				<div>
+					<h1>Radiant Uploader</h1>
+					<p>by Jackal Labs</p>
+				</div>
 				<div>
 					<button
+						className='blue-btn'
 						onClick={connectButtonClick}
 						disabled={walletActive ? true : false}
 					>
@@ -274,7 +289,7 @@ function App() {
 							<button onClick={uploadButtonClick}>Upload</button>
 						</>
 					)}
-					<p>[INSERT ICON]</p>
+					<UploadIcon className='upload-icon' />
 					<p>Drag and drop file or folder</p>
 					<button onClick={browseFilesButtonClick}>BROWSE FILES</button>
 					<input
@@ -289,17 +304,28 @@ function App() {
 
 				{/* RIGHT */}
 				<div className='right'>
-					<div className='nav-bar'>/Home</div>
+					<div className='nav-bar'>
+						{currentDir && <p>{currentDir.getWhoAmI()}/</p>}
+					</div>
 					<div className='file-manager'>
-						<h3>Folders</h3>
 						<h3>File Manager</h3>
+						{folders &&
+							folders.map((e, i) => (
+								<div key={i} className='each-folder'>
+									<div className='folder-name'>
+										<FolderIcon />
+										{e}
+									</div>
+								</div>
+							))}
 						{data.map((e, i) => (
-							<div className='files'>
-								<li key={i}>
+							<div key={i} className='each-file'>
+								<div className='file-name'>
+									<FileIcon />
 									{e.name}
-									{"    "}
-									<button onClick={() => openFile(e.name)}>View online</button>
-								</li>
+								</div>
+								<p onClick={() => openFile(e.name)}>View online</p>
+								<p>delete</p>
 							</div>
 						))}
 					</div>

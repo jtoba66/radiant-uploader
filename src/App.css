@@ -1,14 +1,39 @@
 .App {
   text-align: center;
 }
+h1,p{
+  margin: 10px;
+}
+
+button{
+  padding: 10px 15px;
+  border-radius: 10px;
+  margin: 0 0.5rem;
+  background: black;
+  color: white;
+	border: none;
+	font: inherit;
+	cursor: pointer;
+	outline: inherit;
+}
+
+button:hover{
+  background-color: #282c34;
+}
+.blue-btn{
+  background-color: #50A0FF;
+  color: white;
+}
+.blue-btn:hover{
+  background-color: #2b70c4;
+}
 
 .header {
-  background-color: #282c34;
+  /* background-color: #282c34; */
   display: flex;
   padding: 0 1rem;
   align-items: center;
   justify-content: space-between;
-  color: white;
 }
 .main-body{
   margin: 1rem 0.5rem;
@@ -50,9 +75,13 @@
 
 .drag-drop-zone {
   text-align: left;
-  background: #282c34;
+  /* background: #282c34; */
   box-shadow: 5px 5px 10px #C0C0C0;
-  color: #ffffff;
+  /* color: #ffffff; */
+}
+
+.upload-icon{
+  max-width: 100px;
 }
 
 .drag-drop-zone.inside-drag-area {
@@ -67,4 +96,18 @@
 }
 .files{
 
+}
+.each-file{
+  display: grid;
+  grid-template-columns: 2fr 2fr 1fr;
+  margin: 10px auto;
+}
+
+.file-name{
+  display:flex;
+  align-items: center;
+}
+
+.each-file svg{
+  max-height: 35px;
 }
