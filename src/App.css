@@ -5,6 +5,13 @@ h1,p{
   margin: 10px;
 }
 
+h3{
+  position: absolute;
+  right:50%;
+  top: 50%;
+
+}
+
 button{
   padding: 10px 15px;
   border-radius: 10px;
@@ -85,8 +92,12 @@ button:hover{
 }
 
 .drag-drop-zone.inside-drag-area {
-  opacity: 0.6;
   box-shadow: 5px 5px 10px #00ffd5;
+  background: #2b70c4;
+}
+
+.blurry{
+  filter: blur(10px);
 }
 
 .uploading-queue{
@@ -110,4 +121,17 @@ button:hover{
 
 .each-file svg{
   max-height: 35px;
+}
+
+.folder-container{
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  margin: 1rem auto;
+}
+
+.each-folder{
+  display: flex;
+  flex-direction: column;
+  margin: 14px;
 }

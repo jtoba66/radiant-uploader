@@ -222,6 +222,16 @@ function App() {
 		}
 	}
 
+	const createMultiFolders = async (folderNames: string[]) => {
+		if (wallet && fileIo) {
+			const folderHandler = await fileIo.downloadFolder("s/" + path)
+			await fileIo?.createFolders(folderHandler, folderNames)
+			updateFileList(wallet, fileIo)
+		} else {
+			console.log("can't create folders")
+		}
+	}
+
 	// useEffect(() => {
 	// 	console.log("useEffect...")
 	// }, [])
@@ -229,13 +239,11 @@ function App() {
 	useMemo(() => {
 		console.log("useMemo...")
 		wallet && fileIo && updateFileList(wallet, fileIo)
-		console.log("currentDir:", currentDir)
 	}, [wallet, fileIo])
 
 	const testFunction = async () => {
 		// const parentFolderPath = "s/" + path
-		console.log("test btn clicked")
-		folders.map((e) => console.log(e))
+		console.log("TEST:")
 	}
 
 	return (
@@ -264,7 +272,8 @@ function App() {
 				</div>
 			</div>
 			{loading && <h2>LOADING...</h2>}
-			<div className='main-body'>
+			{wallet == null && <h3>Please connect your wallet</h3>}
+			<div className={"main-body " + (wallet == null ? "blurry" : "")}>
 				{/* LEFT */}
 				<div
 					className={
@@ -308,16 +317,16 @@ function App() {
 						{currentDir && <p>{currentDir.getWhoAmI()}/</p>}
 					</div>
 					<div className='file-manager'>
-						<h3>File Manager</h3>
-						{folders &&
-							folders.map((e, i) => (
-								<div key={i} className='each-folder'>
-									<div className='folder-name'>
+						<h2>File Manager</h2>
+						<div className='folder-container'>
+							{folders &&
+								folders.map((e, i) => (
+									<div key={i} className='each-folder'>
 										<FolderIcon />
-										{e}
+										<div className='folder-name'>{e}</div>
 									</div>
-								</div>
-							))}
+								))}
+						</div>
 						{data.map((e, i) => (
 							<div key={i} className='each-file'>
 								<div className='file-name'>
