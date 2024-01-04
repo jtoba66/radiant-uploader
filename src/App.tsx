@@ -206,6 +206,7 @@ function App() {
 		e.stopPropagation()
 		setInDropZone(true)
 	}
+
 	const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
 		e.preventDefault()
 		e.stopPropagation()
@@ -214,7 +215,16 @@ function App() {
 		if (e.dataTransfer?.files[0].type === "") {
 			// let's assume a file with empty type means a folder
 			let filesAndFolders = await getFilesAsync(e.dataTransfer)
-			setSelectedFiles(filesAndFolders)
+			// let files = filesAndFolders.files
+			// let folders = filesAndFolders.folders
+			console.log("FINAL:", filesAndFolders)
+
+			for (const key in filesAndFolders) {
+				console.log(key, filesAndFolders[key])
+			}
+			// filter out .DS_Store files
+			// let filtered = files.filter((file) => !file.name.includes(".DS_Store"))
+			// setSelectedFiles(filtered)
 		} else {
 			let files = e.dataTransfer?.files || []
 			let selected = Array.from(files)
@@ -309,6 +319,13 @@ function App() {
 						multiple
 						onChange={handleFileChange}
 					/>
+					<button
+						onClick={() => {
+							setSelectedFiles([])
+						}}
+					>
+						Clear upload list
+					</button>
 				</div>
 
 				{/* RIGHT */}

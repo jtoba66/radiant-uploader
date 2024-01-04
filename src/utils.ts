@@ -1,3 +1,12 @@
+interface FilesAndFolders {
+	files: File[]
+	folders: string[]
+}
+
+interface FilesAndPaths {
+	[key: string]: File[]
+}
+
 export const isDirectory = (
 	entry: FileSystemEntry
 ): entry is FileSystemDirectoryEntry => {
@@ -12,14 +21,17 @@ export const isFile = (
 
 export const getFilesAsync = async (dataTransfer: DataTransfer) => {
 	const files: File[] = []
+	const filesAndPaths: FilesAndPaths = {}
+
 	for (let i = 0; i < dataTransfer.items.length; i++) {
 		const item = dataTransfer.items[i]
 		if (item.kind === "file") {
 			if (typeof item.webkitGetAsEntry === "function") {
 				const entry = item.webkitGetAsEntry()
 				if (entry) {
-					const entryContent = await readEntryContentAsync(entry)
-					files.push(...entryContent)
+					// const entryContent = await readEntryContentAsync(entry, filesAndPaths)
+					// files.push(...entryContent)
+					await readEntryContentAsync(entry, filesAndPaths)
 				}
 				continue
 			}
@@ -30,27 +42,34 @@ export const getFilesAsync = async (dataTransfer: DataTransfer) => {
 			}
 		}
 	}
-
-	return files
+	// console.log("WE WANT THIS: ", filesAndPaths)
+	return filesAndPaths
 }
 
 // Returns a promise with all the files of the directory hierarchy
-function readEntryContentAsync(entry: FileSystemEntry) {
-	return new Promise<File[]>((resolve, reject) => {
+function readEntryContentAsync(entry: FileSystemEntry, tree: FilesAndPaths) {
+	return new Promise<FilesAndPaths>((resolve, reject) => {
 		let reading = 0
-		const contents: File[] = []
+		// const contents: File[] = []
 
 		readEntry(entry)
 
 		function readEntry(entry: FileSystemEntry) {
+			let fullPath = entry.fullPath.split("/")
+			fullPath.pop()
+			let path = fullPath.join("/")
+
 			if (isFile(entry)) {
 				reading++
 				entry.file((file) => {
 					reading--
-					contents.push(file)
+					// console.log("-->", reading, file)
+					// contents.push(file)
+					tree[path] = tree[path] || []
+					tree[path].push(file)
 
 					if (reading === 0) {
-						resolve(contents)
+						resolve(tree)
 					}
 				})
 			} else if (isDirectory(entry)) {
@@ -68,7 +87,7 @@ function readEntryContentAsync(entry: FileSystemEntry) {
 				}
 
 				if (reading === 0) {
-					resolve(contents)
+					resolve(tree)
 				}
 			})
 		}
