@@ -3,7 +3,7 @@ interface FilesAndFolders {
 	folders: string[]
 }
 
-interface FilesAndPaths {
+export interface FilesAndPaths {
 	[key: string]: File[]
 }
 

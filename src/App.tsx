@@ -21,7 +21,7 @@ import {
 } from "@jackallabs/jackal.js"
 
 import { testnet } from "./config"
-import { getFilesAsync } from "./utils"
+import { getFilesAsync, FilesAndPaths } from "./utils"
 
 type FileData = {
 	name: string
@@ -29,7 +29,7 @@ type FileData = {
 }
 
 const ioVersion = "1.1.2"
-const path = "radiant"
+// const path = "radiant"
 
 function App() {
 	const [loading, setLoading] = useState<boolean>(false)
@@ -44,6 +44,8 @@ function App() {
 	const [selectedFiles, setSelectedFiles] = useState<File[]>([])
 	const [inDropZone, setInDropZone] = useState<boolean>(false)
 	const [currentDir, setCurrentDir] = useState<IFolderHandler | null>(null)
+	const [fileTree, setFileTree] = useState<FilesAndPaths>({})
+	const [path, setPath] = useState<string>("radiant")
 
 	const initWallet = async () => {
 		setLoading(true)
@@ -65,7 +67,7 @@ function App() {
 		// If folder doesn't exist, create folder
 		await trackIo.verifyFoldersExist(listOfFolders)
 
-		await updateFileList(trackWallet, trackIo)
+		await loadRoot(trackWallet, trackIo)
 		await updateBalance(trackWallet)
 
 		setWalletActive(true)
@@ -76,14 +78,60 @@ function App() {
 		let balance = await wallet?.getJackalBalance()
 		setJKLBalance(parseInt(balance?.amount || "0") / 1000000)
 	}
-	const updateFileList = async (wallet: IWalletHandler, fileIo: FileIo) => {
+	const loadRoot = async (wallet: IWalletHandler, fileIo: FileIo) => {
 		if (fileIo == null) {
 			return
 		}
 		if (wallet == null) {
 			return
 		}
-		const folder = await fileIo.downloadFolder("s/" + path)
+		await setPath("radiant")
+
+		const folder = await fileIo.downloadFolder("s/radiant")
+		setCurrentDir(folder)
+		setFolders(folder.getChildDirs())
+		const files = folder.getFolderDetails().fileChildren
+
+		let d = []
+
+		let x = 0
+		for (const key of Object.keys(files)) {
+			const f = files[key]
+			const fDetails = await getFileTreeData(
+				"s/radiant/" + f.name,
+				wallet.getJackalAddress(),
+				wallet.getQueryHandler()
+			)
+			const dFiles = fDetails.value.files
+			if (dFiles == null) {
+				continue
+			}
+			const fidList = JSON.parse(dFiles.contents)
+			const newFid = fidList.fids[0]
+
+			d[x] = { name: key, fid: newFid }
+			x++
+		}
+		setData(d)
+	}
+	const updateFileList = async () => {
+		loadFolder("")
+	}
+	const loadFolder = async (folderName: string) => {
+		if (fileIo == null) {
+			return
+		}
+		if (wallet == null) {
+			return
+		}
+		let newPath = path
+		if (folderName.length > 0) {
+			newPath = await `${path}/${folderName}`
+			setPath(newPath)
+		}
+
+		const folder = await fileIo.downloadFolder(`s/${newPath}`)
+		console.log(folder)
 		setCurrentDir(folder)
 		setFolders(folder.getChildDirs())
 		const files = folder.getFolderDetails().fileChildren
@@ -148,7 +196,7 @@ function App() {
 					console.log("upload failed")
 				}))
 
-		wallet && fileIo && updateFileList(wallet, fileIo)
+		updateFileList()
 		complete()
 	}
 
@@ -219,11 +267,8 @@ function App() {
 			// let folders = filesAndFolders.folders
 			console.log("FINAL:", filesAndFolders)
 
-			for (const key in filesAndFolders) {
-				console.log(key, filesAndFolders[key])
-			}
 			// filter out .DS_Store files
-			// let filtered = files.filter((file) => !file.name.includes(".DS_Store"))
+			// files = files.filter((file) => !file.name.includes(".DS_Store"))
 			// setSelectedFiles(filtered)
 		} else {
 			let files = e.dataTransfer?.files || []
@@ -236,24 +281,36 @@ function App() {
 		if (wallet && fileIo) {
 			const folderHandler = await fileIo.downloadFolder("s/" + path)
 			await fileIo?.createFolders(folderHandler, folderNames)
-			updateFileList(wallet, fileIo)
+			updateFileList()
 		} else {
 			console.log("can't create folders")
 		}
 	}
 
-	// useEffect(() => {
-	// 	console.log("useEffect...")
-	// }, [])
+	const deleteFile = async (fileName: string) => {
+		setLoading(true)
+		if (fileIo && currentDir) {
+			await fileIo.deleteTargets([fileName], currentDir)
+		} else {
+			console.log("fileIo or currentDir not available")
+		}
+
+		wallet && fileIo && (await updateFileList())
+		setLoading(false)
+	}
+
+	const backToRootClick = () => {
+		wallet && fileIo && loadRoot(wallet, fileIo)
+	}
 
 	useMemo(() => {
 		console.log("useMemo...")
-		wallet && fileIo && updateFileList(wallet, fileIo)
+		updateFileList()
 	}, [wallet, fileIo])
 
 	const testFunction = async () => {
 		// const parentFolderPath = "s/" + path
-		console.log("TEST:")
+		console.log("TEST:", path)
 	}
 
 	return (
@@ -331,7 +388,10 @@ function App() {
 				{/* RIGHT */}
 				<div className='right'>
 					<div className='nav-bar'>
-						{currentDir && <p>{currentDir.getWhoAmI()}/</p>}
+						<button onClick={backToRootClick}>back to root</button>
+						{currentDir && (
+							<p>{`${currentDir.getWhereAmI()}/${currentDir.getWhoAmI()}`}/</p>
+						)}
 					</div>
 					<div className='file-manager'>
 						<h2>File Manager</h2>
@@ -339,7 +399,7 @@ function App() {
 							{folders &&
 								folders.map((e, i) => (
 									<div key={i} className='each-folder'>
-										<FolderIcon />
+										<FolderIcon onClick={() => loadFolder(e)} />
 										<div className='folder-name'>{e}</div>
 									</div>
 								))}
@@ -351,7 +411,7 @@ function App() {
 									{e.name}
 								</div>
 								<p onClick={() => openFile(e.name)}>View online</p>
-								<p>delete</p>
+								<p onClick={() => deleteFile(e.name)}>delete</p>
 							</div>
 						))}
 					</div>
