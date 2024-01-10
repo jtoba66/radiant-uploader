@@ -9,7 +9,7 @@ h3{
   position: absolute;
   right:50%;
   top: 50%;
-
+  z-index: 5;
 }
 
 button{
@@ -78,6 +78,16 @@ button:hover{
   box-shadow: 5px 5px 10px #C0C0C0;
 
 }
+
+.navigation{
+  margin: auto 3px;
+}
+
+.navigation:hover{
+font-weight: 600;
+cursor: pointer;
+}
+
 .file-manager{
   border: 2px solid #282c34;
   border-radius: 5px;
@@ -102,6 +112,14 @@ button:hover{
 
 .blurry{
   filter: blur(10px);
+  pointer-events: none;
+}
+
+.loading_cat{
+position:fixed;
+top: 30%;
+left: 45%;
+z-index: 1;
 }
 
 .uploading-queue{
@@ -150,13 +168,14 @@ button:hover{
   display: flex;
   align-items: center;
   justify-content: left;
-  margin: 1rem auto;
+  margin: 1rem 2rem;
+  gap: 3rem;
 }
 
 .each-folder{
   display: flex;
   flex-direction: column;
-  margin: 20px 14px;
+  /* margin: 20px 14px; */
   cursor: pointer;
 }
 .each-folder svg{

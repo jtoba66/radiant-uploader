@@ -5,6 +5,8 @@ import "./App.css"
 import { ReactComponent as UploadIcon } from "./assets/upload-icon.svg"
 import { ReactComponent as FileIcon } from "./assets/file-icon.svg"
 import { ReactComponent as FolderIcon } from "./assets/folder-icon.svg"
+import loading_cat from "./assets/loading_cat.gif"
+import loading_cat_smol from "./assets/loading_cat_smol.gif"
 
 import type {
 	IWalletConfig,
@@ -46,6 +48,7 @@ function App() {
 	const [currentDir, setCurrentDir] = useState<IFolderHandler | null>(null)
 	const [fileTree, setFileTree] = useState<FilesAndPaths>({})
 	const [path, setPath] = useState<string>("radiant")
+	const [navigation, setNavigation] = useState<any>([])
 
 	const initWallet = async () => {
 		setLoading(true)
@@ -117,10 +120,15 @@ function App() {
 		setLoading(false)
 		setData(d)
 	}
+
 	const updateFileList = async () => {
 		loadFolder("")
 	}
-	const loadFolder = async (folderName: string) => {
+
+	const loadFolder = async (
+		folderName: string,
+		navigation: boolean = false
+	) => {
 		setLoading(true)
 		if (fileIo == null) {
 			return
@@ -128,9 +136,16 @@ function App() {
 		if (wallet == null) {
 			return
 		}
+
 		let newPath = path
-		if (folderName.length > 0) {
+
+		if (folderName.length > 0 && !navigation) {
 			newPath = `${path}/${folderName}`
+			setPath(newPath)
+		}
+
+		if (navigation) {
+			newPath = "radiant/" + folderName
 			setPath(newPath)
 		}
 
@@ -155,9 +170,10 @@ function App() {
 				continue
 			}
 			const fidList = JSON.parse(dFiles.contents)
-			const newFid = fidList.fids[0]
+			const newFid = fidList?.fids?.[0]
 
 			d[x] = { name: key, fid: newFid }
+
 			x++
 		}
 		setLoading(false)
@@ -199,7 +215,7 @@ function App() {
 					console.log(err)
 					console.log("upload failed")
 				}))
-
+		console.log("uploading to: ", currentDir)
 		setSelectedFiles([])
 		updateFileList()
 		complete()
@@ -285,6 +301,7 @@ function App() {
 	}
 
 	const createMultiFolders = async (folderNames: string[]) => {
+		console.log(path)
 		if (wallet && fileIo) {
 			const folderHandler = await fileIo.downloadFolder("s/" + path)
 			await fileIo?.createFolders(folderHandler, folderNames)
@@ -293,19 +310,47 @@ function App() {
 			console.log("can't create folders")
 		}
 	}
+	const newFolderClick = async () => {
+		setLoading(true)
+		let folderName = prompt("New folder's name")
+		if (folderName) {
+			await createMultiFolders([folderName])
+		}
+		await updateFileList()
+		setLoading(false)
+	}
 
 	const backToRootClick = () => {
 		wallet && fileIo && loadRoot(wallet, fileIo)
 	}
 
+	const navigationClick = async (index: number) => {
+		let arr = []
+		for (let i = 0; i <= index; i++) {
+			arr.push(navigation[i])
+		}
+		let newPath = arr.join("/")
+		console.log("navigationClick", newPath)
+		setPath("")
+		loadFolder(newPath, true)
+	}
+
 	useMemo(() => {
-		console.log("useMemo...")
+		console.log("useMemo (wallet, fileIo)")
 		updateFileList()
 	}, [wallet, fileIo])
 
+	useMemo(() => {
+		if (currentDir) {
+			let arr = `${currentDir.getWhereAmI()}/${currentDir.getWhoAmI()}`.split(
+				"/"
+			)
+			arr.splice(0, 2)
+			setNavigation(arr)
+		}
+	}, [currentDir])
+
 	const testFunction = async () => {
-		// const parentFolderPath = "s/" + path
-		updateFileList()
 		console.log("TEST:", path)
 	}
 
@@ -349,50 +394,83 @@ function App() {
 					onDragEnter={(e) => handleDragEnter(e)}
 					onDragLeave={(e) => handleDragLeave(e)}
 				>
-					{uploading && <h2>Uploading in progress...</h2>}
-					{selectedFiles.length > 0 && (
+					{uploading ? (
+						<img alt='uploading...' src={loading_cat_smol} />
+					) : (
 						<>
-							<div className='uploading-queue'>
-								<h4>Uploading queue:</h4>
-								{selectedFiles.map((e, i) => (
-									<li key={i}> {e.name}</li>
-								))}
-							</div>
-							<button onClick={uploadButtonClick}>Upload</button>
+							{selectedFiles.length > 0 && (
+								<>
+									<div className='uploading-queue'>
+										<h4>Uploading queue:</h4>
+										{selectedFiles.map((e, i) => (
+											<li key={i}> {e.name}</li>
+										))}
+									</div>
+									<button onClick={uploadButtonClick}>Upload</button>
+								</>
+							)}
+							<UploadIcon className='upload-icon' />
+							<p>Drag and drop file or folder</p>
+							<button onClick={browseFilesButtonClick}>BROWSE FILES</button>
+							<input
+								type='file'
+								id='file'
+								ref={singleFile}
+								style={{ display: "none" }}
+								multiple
+								onChange={handleFileChange}
+							/>
+							{selectedFiles[0] && (
+								<button
+									onClick={() => {
+										setSelectedFiles([])
+									}}
+								>
+									Clear upload list
+								</button>
+							)}
 						</>
-					)}
-					<UploadIcon className='upload-icon' />
-					<p>Drag and drop file or folder</p>
-					<button onClick={browseFilesButtonClick}>BROWSE FILES</button>
-					<input
-						type='file'
-						id='file'
-						ref={singleFile}
-						style={{ display: "none" }}
-						multiple
-						onChange={handleFileChange}
-					/>
-					{selectedFiles[0] && (
-						<button
-							onClick={() => {
-								setSelectedFiles([])
-							}}
-						>
-							Clear upload list
-						</button>
 					)}
 				</div>
 
 				{/* RIGHT */}
 				<div className='right'>
 					<div className='nav-bar'>
-						<button onClick={backToRootClick}>back to root</button>
-						{currentDir && (
+						<button onClick={backToRootClick}>Root</button>
+						{navigation.map((e: any, i: any) => {
+							return (
+								<>
+									<p
+										className='navigation'
+										onClick={(e) => navigationClick(i)}
+										key={i}
+									>
+										{e} /
+									</p>
+								</>
+							)
+						})}
+						{/* {currentDir && (
 							<p>{`${currentDir.getWhereAmI()}/${currentDir.getWhoAmI()}`}/</p>
-						)}
+						)} */}
 					</div>
-					<div className='file-manager'>
-						<h2>File Manager</h2>
+					{wallet && loading && (
+						<div className='loading_cat'>
+							<img alt='cat is loading pls wait' src={loading_cat} />
+							<p>Pls hold...</p>
+						</div>
+					)}
+					<div className={"file-manager " + (loading ? "blurry" : "")}>
+						<div
+							style={{
+								display: "flex",
+								justifyContent: "space-between",
+								margin: "0 10px"
+							}}
+						>
+							<h2>File Manager</h2>
+							<button onClick={newFolderClick}>New folder</button>
+						</div>
 						<div className='folder-container'>
 							{folders &&
 								folders.map((e, i) => (
