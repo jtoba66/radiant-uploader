@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useMemo } from "react"
+import React, { useEffect, useRef, useMemo, ReactEventHandler } from "react"
 import { useState } from "react"
 import "./App.css"
 
@@ -79,13 +79,15 @@ function App() {
 		setJKLBalance(parseInt(balance?.amount || "0") / 1000000)
 	}
 	const loadRoot = async (wallet: IWalletHandler, fileIo: FileIo) => {
+		setLoading(true)
 		if (fileIo == null) {
 			return
 		}
 		if (wallet == null) {
 			return
 		}
-		await setPath("radiant")
+
+		setPath("radiant")
 
 		const folder = await fileIo.downloadFolder("s/radiant")
 		setCurrentDir(folder)
@@ -95,7 +97,7 @@ function App() {
 		let d = []
 
 		let x = 0
-		for (const key of Object.keys(files)) {
+		for await (const key of Object.keys(files)) {
 			const f = files[key]
 			const fDetails = await getFileTreeData(
 				"s/radiant/" + f.name,
@@ -112,12 +114,14 @@ function App() {
 			d[x] = { name: key, fid: newFid }
 			x++
 		}
+		setLoading(false)
 		setData(d)
 	}
 	const updateFileList = async () => {
 		loadFolder("")
 	}
 	const loadFolder = async (folderName: string) => {
+		setLoading(true)
 		if (fileIo == null) {
 			return
 		}
@@ -126,12 +130,11 @@ function App() {
 		}
 		let newPath = path
 		if (folderName.length > 0) {
-			newPath = await `${path}/${folderName}`
+			newPath = `${path}/${folderName}`
 			setPath(newPath)
 		}
 
 		const folder = await fileIo.downloadFolder(`s/${newPath}`)
-		console.log(folder)
 		setCurrentDir(folder)
 		setFolders(folder.getChildDirs())
 		const files = folder.getFolderDetails().fileChildren
@@ -139,7 +142,7 @@ function App() {
 		let d = []
 
 		let x = 0
-		for (const key of Object.keys(files)) {
+		for await (const key of Object.keys(files)) {
 			const f = files[key]
 
 			const fDetails = await getFileTreeData(
@@ -157,6 +160,7 @@ function App() {
 			d[x] = { name: key, fid: newFid }
 			x++
 		}
+		setLoading(false)
 		setData(d)
 	}
 
@@ -196,15 +200,18 @@ function App() {
 					console.log("upload failed")
 				}))
 
+		setSelectedFiles([])
 		updateFileList()
 		complete()
 	}
 
-	const connectButtonClick = async () => {
+	const connectButtonClick = async (e: any) => {
+		e.target.disabled = true
 		await initWallet()
 		if (!wallet) {
 			initWallet()
 		}
+		e.target.disabled = false
 	}
 
 	const singleFile = useRef<HTMLInputElement | null>(null)
@@ -287,18 +294,6 @@ function App() {
 		}
 	}
 
-	const deleteFile = async (fileName: string) => {
-		setLoading(true)
-		if (fileIo && currentDir) {
-			await fileIo.deleteTargets([fileName], currentDir)
-		} else {
-			console.log("fileIo or currentDir not available")
-		}
-
-		wallet && fileIo && (await updateFileList())
-		setLoading(false)
-	}
-
 	const backToRootClick = () => {
 		wallet && fileIo && loadRoot(wallet, fileIo)
 	}
@@ -310,6 +305,7 @@ function App() {
 
 	const testFunction = async () => {
 		// const parentFolderPath = "s/" + path
+		updateFileList()
 		console.log("TEST:", path)
 	}
 
@@ -323,7 +319,7 @@ function App() {
 				<div>
 					<button
 						className='blue-btn'
-						onClick={connectButtonClick}
+						onClick={(e) => connectButtonClick(e)}
 						disabled={walletActive ? true : false}
 					>
 						{walletActive ? "Connected" : "Connect Wallet"}
@@ -357,7 +353,7 @@ function App() {
 					{selectedFiles.length > 0 && (
 						<>
 							<div className='uploading-queue'>
-								<h3>Uploading queue:</h3>
+								<h4>Uploading queue:</h4>
 								{selectedFiles.map((e, i) => (
 									<li key={i}> {e.name}</li>
 								))}
@@ -376,13 +372,15 @@ function App() {
 						multiple
 						onChange={handleFileChange}
 					/>
-					<button
-						onClick={() => {
-							setSelectedFiles([])
-						}}
-					>
-						Clear upload list
-					</button>
+					{selectedFiles[0] && (
+						<button
+							onClick={() => {
+								setSelectedFiles([])
+							}}
+						>
+							Clear upload list
+						</button>
+					)}
 				</div>
 
 				{/* RIGHT */}
@@ -410,8 +408,9 @@ function App() {
 									<FileIcon />
 									{e.name}
 								</div>
-								<p onClick={() => openFile(e.name)}>View online</p>
-								<p onClick={() => deleteFile(e.name)}>delete</p>
+								<p className='view-online' onClick={() => openFile(e.name)}>
+									View online
+								</p>
 							</div>
 						))}
 					</div>

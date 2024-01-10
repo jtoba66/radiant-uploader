@@ -34,6 +34,10 @@ button:hover{
 .blue-btn:hover{
   background-color: #2b70c4;
 }
+.blue-btn:disabled{
+  background-color: #97abc4;
+  cursor:not-allowed;
+}
 
 .header {
   /* background-color: #282c34; */
@@ -110,8 +114,11 @@ button:hover{
 }
 .each-file{
   display: grid;
-  grid-template-columns: 2fr 2fr 1fr;
-  margin: 10px auto;
+  grid-template-columns: 3fr 1fr;
+  margin: 15px auto;
+}
+.each-file:hover{
+  background-color: #8ed4ff;
 }
 
 .file-name{
@@ -120,7 +127,23 @@ button:hover{
 }
 
 .each-file svg{
-  max-height: 35px;
+  max-height: 30px;
+}
+
+.view-online{
+  width:fit-content;
+  background: #291e29;
+  color: #d2d2d2;;
+  border: 1px solid  #d2d2d2;
+  border-radius: 10px;
+  padding: 3px 8px;
+}
+.view-online:hover{
+  background-color: #ff6a00;
+  cursor: pointer;
+}
+.view-online:active{
+  background-color: #fef38d;
 }
 
 .folder-container{
@@ -133,5 +156,16 @@ button:hover{
 .each-folder{
   display: flex;
   flex-direction: column;
-  margin: 14px;
+  margin: 20px 14px;
+  cursor: pointer;
 }
+.each-folder svg{
+  fill: #fef38d;
+}
+.each-folder:hover svg{
+border: 1px dotted grey;
+}
+
+.each-folder:active svg{
+  fill:#50A0FF;
+  }
