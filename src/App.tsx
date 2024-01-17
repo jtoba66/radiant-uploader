@@ -30,6 +30,11 @@ type FileData = {
 	fid: string
 }
 
+// When user switches wallet
+window.addEventListener("keplr_keystorechange", () => {
+	window.location.reload()
+})
+
 const ioVersion = "1.1.2"
 // const path = "radiant"
 
