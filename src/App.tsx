@@ -23,7 +23,7 @@ import {
 } from "@jackallabs/jackal.js"
 
 import { testnet } from "./config"
-import { getFilesAsync, FilesAndPaths } from "./utils"
+import { getFilesAsync, FilesAndPaths, truncate } from "./utils"
 
 type FileData = {
 	name: string
@@ -54,6 +54,7 @@ function App() {
 	const [fileTree, setFileTree] = useState<FilesAndPaths>({})
 	const [path, setPath] = useState<string>("radiant")
 	const [navigation, setNavigation] = useState<any>([])
+	const [noProviders, setNoProviders] = useState(false)
 
 	const initWallet = async () => {
 		setLoading(true)
@@ -232,6 +233,7 @@ function App() {
 		if (!wallet) {
 			initWallet()
 		}
+		checkAvailableProviders()
 		e.target.disabled = false
 	}
 
@@ -355,8 +357,15 @@ function App() {
 		}
 	}, [currentDir])
 
+	const checkAvailableProviders = () => {
+		let providers = fileIo?.getAvailableProviders()
+		if (providers?.length === 0) {
+			setNoProviders(true)
+		}
+	}
+
 	const testFunction = async () => {
-		console.log("TEST:", path)
+		console.log("TEST:")
 	}
 
 	return (
@@ -374,14 +383,23 @@ function App() {
 					>
 						{walletActive ? "Connected" : "Connect Wallet"}
 					</button>
-					<button
+					{/* <button
 						onClick={(e) => {
 							testFunction()
 						}}
 					>
 						Test Button
-					</button>
-					{walletActive && <p className='header'>JKL Balance: {JKLBalance}</p>}
+					</button> */}
+
+					{walletActive && (
+						<>
+							<p>{JKLAddress}</p>
+							<p className='header'>JKL Balance: {JKLBalance}</p>
+						</>
+					)}
+					{noProviders && (
+						<p style={{ color: "red" }}>Providers not available</p>
+					)}
 				</div>
 			</div>
 			{loading && <h2>LOADING...</h2>}
@@ -408,23 +426,12 @@ function App() {
 									<div className='uploading-queue'>
 										<h4>Uploading queue:</h4>
 										{selectedFiles.map((e, i) => (
-											<li key={i}> {e.name}</li>
+											<li key={i}> {truncate(e.name, 20)}</li>
 										))}
 									</div>
 									<button onClick={uploadButtonClick}>Upload</button>
 								</>
 							)}
-							<UploadIcon className='upload-icon' />
-							<p>Drag and drop file or folder</p>
-							<button onClick={browseFilesButtonClick}>BROWSE FILES</button>
-							<input
-								type='file'
-								id='file'
-								ref={singleFile}
-								style={{ display: "none" }}
-								multiple
-								onChange={handleFileChange}
-							/>
 							{selectedFiles[0] && (
 								<button
 									onClick={() => {
@@ -434,6 +441,21 @@ function App() {
 									Clear upload list
 								</button>
 							)}
+							{selectedFiles.length === 0 && (
+								<>
+									<UploadIcon className='upload-icon' />
+									<p>Drag and drop your file(s) here</p>
+									<button onClick={browseFilesButtonClick}>BROWSE FILES</button>
+								</>
+							)}
+							<input
+								type='file'
+								id='file'
+								ref={singleFile}
+								style={{ display: "none" }}
+								multiple
+								onChange={handleFileChange}
+							/>
 						</>
 					)}
 				</div>
@@ -455,9 +477,6 @@ function App() {
 								</>
 							)
 						})}
-						{/* {currentDir && (
-							<p>{`${currentDir.getWhereAmI()}/${currentDir.getWhoAmI()}`}/</p>
-						)} */}
 					</div>
 					{wallet && loading && (
 						<div className='loading_cat'>
@@ -489,7 +508,7 @@ function App() {
 							<div key={i} className='each-file'>
 								<div className='file-name'>
 									<FileIcon />
-									{e.name}
+									{truncate(e.name, 30)}
 								</div>
 								<p className='view-online' onClick={() => openFile(e.name)}>
 									View online

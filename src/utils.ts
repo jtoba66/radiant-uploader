@@ -3,6 +3,10 @@ interface FilesAndFolders {
 	folders: string[]
 }
 
+export const truncate = (str: string, chars = 20): string => {
+	return str.length > chars ? `${str.substring(0, chars)} ...` : str
+}
+
 export interface FilesAndPaths {
 	[key: string]: File[]
 }
