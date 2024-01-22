@@ -2,11 +2,15 @@ import React, { useEffect, useRef, useMemo, ReactEventHandler } from "react"
 import { useState } from "react"
 import "./App.css"
 
-import { ReactComponent as UploadIcon } from "./assets/upload-icon.svg"
-import { ReactComponent as FileIcon } from "./assets/file-icon.svg"
+// import { ReactComponent as UploadIcon } from "./assets/upload-icon.svg"
+// import { ReactComponent as FileIcon } from "./assets/file-icon.svg"
 import { ReactComponent as FolderIcon } from "./assets/folder-icon.svg"
+
 import loading_cat from "./assets/loading_cat.gif"
 import loading_cat_smol from "./assets/loading_cat_smol.gif"
+import official_logo from "./assets/radiant_official_logo.png"
+import file_icon from "./assets/file.png"
+import upload_icon from "./assets/upload.png"
 
 import type {
 	IWalletConfig,
@@ -372,8 +376,8 @@ function App() {
 		<div className='App'>
 			<div className='header'>
 				<div>
-					<h1>Radiant Uploader</h1>
-					<p>by Jackal Labs</p>
+					<img alt='Official Radiant Logo' id='logo' src={official_logo} />
+					<p id='by-jkl'>by Jackal Labs</p>
 				</div>
 				<div>
 					<button
@@ -393,8 +397,10 @@ function App() {
 
 					{walletActive && (
 						<>
-							<p>{JKLAddress}</p>
-							<p className='header'>JKL Balance: {JKLBalance}</p>
+							<p>{`Address: ${JKLAddress.slice(0, 6)}...${JKLAddress.slice(
+								-4
+							)}`}</p>
+							<p className='header'>Balance: {JKLBalance.toFixed(3)} JKL</p>
 						</>
 					)}
 					{noProviders && (
@@ -430,6 +436,7 @@ function App() {
 										))}
 									</div>
 									<button onClick={uploadButtonClick}>Upload</button>
+									<br />
 								</>
 							)}
 							{selectedFiles[0] && (
@@ -443,8 +450,10 @@ function App() {
 							)}
 							{selectedFiles.length === 0 && (
 								<>
-									<UploadIcon className='upload-icon' />
+									{/* <UploadIcon className='upload-icon' /> */}
+									<img alt='upload icon' width={50} src={upload_icon} />
 									<p>Drag and drop your file(s) here</p>
+									<p></p>
 									<button onClick={browseFilesButtonClick}>BROWSE FILES</button>
 								</>
 							)}
@@ -484,17 +493,18 @@ function App() {
 							<p>Pls hold...</p>
 						</div>
 					)}
+					<div
+						style={{
+							display: "flex",
+							justifyContent: "space-between",
+							margin: "0 10px"
+						}}
+						className='title-bar'
+					>
+						<h2>File Manager</h2>
+						<button onClick={newFolderClick}>New folder</button>
+					</div>
 					<div className={"file-manager " + (loading ? "blurry" : "")}>
-						<div
-							style={{
-								display: "flex",
-								justifyContent: "space-between",
-								margin: "0 10px"
-							}}
-						>
-							<h2>File Manager</h2>
-							<button onClick={newFolderClick}>New folder</button>
-						</div>
 						<div className='folder-container'>
 							{folders &&
 								folders.map((e, i) => (
@@ -507,7 +517,8 @@ function App() {
 						{data.map((e, i) => (
 							<div key={i} className='each-file'>
 								<div className='file-name'>
-									<FileIcon />
+									{/* <FileIcon /> */}
+									<img height={30} alt='file_icon' src={file_icon} />
 									{truncate(e.name, 30)}
 								</div>
 								<p className='view-online' onClick={() => openFile(e.name)}>

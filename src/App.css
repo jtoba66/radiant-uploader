@@ -1,3 +1,6 @@
+html{
+ background: #eeeeee;
+}
 .App {
   text-align: center;
 }
@@ -12,8 +15,17 @@ h3{
   z-index: 5;
 }
 
+#logo{
+  width: 15vw;
+  max-width: 300px;
+}
+#by-jkl{
+  margin:0;
+  margin-top: -15px;
+}
+
 button{
-  padding: 10px 15px;
+  /* padding: 10px 15px;
   border-radius: 10px;
   margin: 10px 0.5rem;
   background: black;
@@ -21,22 +33,46 @@ button{
 	border: none;
 	font: inherit;
 	cursor: pointer;
-	outline: inherit;
+	outline: inherit; */
+
+  background: silver;
+  box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px grey, inset 2px 2px #dfdfdf;
+  border: none;
+  border-radius: 0;
+  box-sizing: border-box;
+  color: transparent;
+  min-height: 23px;
+  min-width: 75px;
+  padding: 8px 12px;
+  text-shadow: 0 0 #222;
+  height: fit-content;
 }
 
 button:hover{
-  background-color: #282c34;
+  outline: 1px dotted #000;
+  outline-offset: -4px;
+  background-color: rgb(134, 134, 134);
 }
+
+button:not(:disabled):active{
+  box-shadow: inset -1px -1px #fff, inset 1px 1px #0a0a0a, inset -2px -2px #dfdfdf, inset 2px 2px grey;
+  text-shadow: 1px 1px #222;
+}
+
 .blue-btn{
   background-color: #50A0FF;
   color: white;
 }
 .blue-btn:hover{
   background-color: #2b70c4;
+  outline: 1px dotted #000;
 }
 .blue-btn:disabled{
-  background-color: #97abc4;
+  color:grey;
   cursor:not-allowed;
+  text-shadow: 1px 1px 0 #fff;
+  background: silver;
+  box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px grey, inset 2px 2px #dfdfdf;
 }
 
 .header {
@@ -61,23 +97,33 @@ button:hover{
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
+  border: 1px solid #373737;
+  border-radius: 0;
+  box-shadow: 5px 5px 10px #C0C0C0;
+  padding-top: 10px;
+  box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #dfdfdf, inset -2px -2px grey, inset 2px 2px #fff;
 }
 
 .right{
   display:grid;
-  grid-template-rows: 1fr 10fr;
-  gap: 0.5rem;
-
+  grid-template-rows: 1fr 50px 10fr;
 }
 
 .nav-bar{
-  border: 2px solid #282c34;
-  border-radius: 5px;
+  border: 1px solid #373737;
+  /* border-radius: 5px; */
   display: flex;
+  align-items: center;
   padding: 1rem;
   box-shadow: 5px 5px 10px #C0C0C0;
+  margin-bottom: 0.5rem;
 
+  box-shadow: 5px 5px 10px #C0C0C0;
+  padding-top: 10px;
+  box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #dfdfdf, inset -2px -2px grey, inset 2px 2px #fff;
 }
+
 
 .navigation{
   margin: auto 3px;
@@ -89,9 +135,13 @@ cursor: pointer;
 }
 
 .file-manager{
-  border: 2px solid #282c34;
-  border-radius: 5px;
+  /* border: 2px solid #282c34; */
+  /* border-radius: 5px; */
+
+  border: 1px solid #373737;
   box-shadow: 5px 5px 10px #C0C0C0;
+  padding-top: 10px;
+  box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #dfdfdf, inset -2px -2px grey, inset 2px 2px #fff;
 }
 
 .drag-drop-zone {
@@ -127,8 +177,14 @@ z-index: 1;
   list-style-type: decimal;
 
 }
-.files{
-
+.title-bar{
+  align-items: center;
+  background: linear-gradient(90deg,navy,#1084d0);
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 15px;
+  color: white;
+  margin: 0 !important;
 }
 .each-file{
   display: grid;
@@ -136,12 +192,15 @@ z-index: 1;
   margin: 15px auto;
 }
 .each-file:hover{
-  background-color: #8ed4ff;
+  background-color: #060a77;
+  color:white;
 }
 
 .file-name{
   display:flex;
   align-items: center;
+  gap: 1rem;
+  margin-left: 10px;
 }
 
 .each-file svg{
@@ -155,6 +214,16 @@ z-index: 1;
   border: 1px solid  #d2d2d2;
   border-radius: 10px;
   padding: 3px 8px;
+
+  box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px grey, inset 2px 2px #dfdfdf;
+  border: none;
+  border-radius: 0;
+  box-sizing: border-box;
+  text-shadow: 0 0 #222;
+  background: silver;
+  color:black;
+  font-size: 14px;
+  font-weight: 300;
 }
 .view-online:hover{
   background-color: #ff6a00;
