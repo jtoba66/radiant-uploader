@@ -26,7 +26,7 @@ import {
 	FolderHandler
 } from "@jackallabs/jackal.js"
 
-import { testnet } from "./config"
+import { mainnet } from "./config"
 import { getFilesAsync, FilesAndPaths, truncate } from "./utils"
 
 type FileData = {
@@ -64,7 +64,8 @@ function App() {
 		setLoading(true)
 		const walletConfig: IWalletConfig = {
 			selectedWallet: "keplr",
-			...testnet
+			// ...testnet
+			...mainnet
 		}
 		let trackWallet = await WalletHandler.trackWallet(walletConfig)
 		setWallet(trackWallet)
@@ -202,6 +203,7 @@ function App() {
 		setUploading(true)
 		const parentFolderPath = "s/" + path
 		let uploadList: IUploadList = {}
+		console.log("uploading:", uploadList)
 
 		await Promise.all(
 			files.map(async (file) => {
@@ -225,7 +227,6 @@ function App() {
 					console.log(err)
 					console.log("upload failed")
 				}))
-		console.log("uploading to: ", currentDir)
 		setSelectedFiles([])
 		updateFileList()
 		complete()
@@ -260,7 +261,8 @@ function App() {
 			return
 		}
 		const link =
-			"https://testnet.jackal.link/p/" +
+			// "https://testnet.jackal.link/p/" +
+			"https://jackal.link/p/" +
 			wallet.getJackalAddress() +
 			"/" +
 			path +
