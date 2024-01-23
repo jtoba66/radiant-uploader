@@ -476,16 +476,22 @@ function App() {
 					<div className='nav-bar'>
 						<button onClick={backToRootClick}>Root</button>
 						{navigation.map((e: any, i: any) => {
+							console.log()
+							if (i === navigation.length - 1) {
+								return (
+									<button className='navigation' key={i} disabled>
+										{e}
+									</button>
+								)
+							}
 							return (
-								<>
-									<p
-										className='navigation'
-										onClick={(e) => navigationClick(i)}
-										key={i}
-									>
-										{e} /
-									</p>
-								</>
+								<button
+									className='navigation'
+									onClick={(e) => navigationClick(i)}
+									key={i}
+								>
+									{e}
+								</button>
 							)
 						})}
 					</div>

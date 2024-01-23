@@ -48,7 +48,7 @@ button{
   height: fit-content;
 }
 
-button:hover{
+button:not(:disabled):hover{
   outline: 1px dotted #000;
   outline-offset: -4px;
   background-color: rgb(134, 134, 134);
@@ -60,15 +60,15 @@ button:not(:disabled):active{
 }
 
 .blue-btn{
-  background-color: #50A0FF;
   color: white;
+  background-color: #50A0FF;
 }
 .blue-btn:hover{
   background-color: #2b70c4;
   outline: 1px dotted #000;
 }
-.blue-btn:disabled{
-  color:grey;
+button:disabled, .blue-btn:disabled{
+  color:grey !important;
   cursor:not-allowed;
   text-shadow: 1px 1px 0 #fff;
   background: silver;
@@ -129,10 +129,6 @@ button:not(:disabled):active{
   margin: auto 3px;
 }
 
-.navigation:hover{
-font-weight: 600;
-cursor: pointer;
-}
 
 .file-manager{
   /* border: 2px solid #282c34; */
