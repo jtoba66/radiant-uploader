@@ -2,15 +2,13 @@ import React, { useEffect, useRef, useMemo, ReactEventHandler } from "react"
 import { useState } from "react"
 import "./App.css"
 
-// import { ReactComponent as UploadIcon } from "./assets/upload-icon.svg"
-// import { ReactComponent as FileIcon } from "./assets/file-icon.svg"
-import { ReactComponent as FolderIcon } from "./assets/folder-icon.svg"
-
 import loading_cat from "./assets/loading_cat.gif"
 import loading_cat_smol from "./assets/loading_cat_smol.gif"
 import official_logo from "./assets/radiant_official_logo.png"
 import file_icon from "./assets/file.png"
 import upload_icon from "./assets/upload.png"
+import folder_icon from "./assets/folder_close.png"
+import folder_open from "./assets/folder_open.png"
 
 import type {
 	IWalletConfig,
@@ -417,8 +415,8 @@ function App() {
 				<div
 					className={
 						inDropZone
-							? "left drag-drop-zone inside-drag-area"
-							: "left drag-drop-zone"
+							? "left sick-border drag-drop-zone inside-drag-area"
+							: "left sick-border drag-drop-zone"
 					}
 					onDrop={(e) => handleDrop(e)}
 					onDragOver={(e) => handleDragOver(e)}
@@ -473,7 +471,7 @@ function App() {
 
 				{/* RIGHT */}
 				<div className='right'>
-					<div className='nav-bar'>
+					<div className='nav-bar sick-border'>
 						<button onClick={backToRootClick}>Root</button>
 						{navigation.map((e: any, i: any) => {
 							console.log()
@@ -512,12 +510,21 @@ function App() {
 						<h2>File Manager</h2>
 						<button onClick={newFolderClick}>New folder</button>
 					</div>
-					<div className={"file-manager " + (loading ? "blurry" : "")}>
+					<div
+						className={"file-manager sick-border" + (loading ? "blurry" : "")}
+					>
 						<div className='folder-container'>
 							{folders &&
 								folders.map((e, i) => (
 									<div key={i} className='each-folder'>
-										<FolderIcon onClick={() => loadFolder(e)} />
+										<img
+											alt='folder'
+											src={folder_icon}
+											width={50}
+											onMouseOver={(e) => (e.currentTarget.src = folder_open)}
+											onMouseLeave={(e) => (e.currentTarget.src = folder_icon)}
+											onClick={() => loadFolder(e)}
+										/>
 										<div className='folder-name'>{e}</div>
 									</div>
 								))}
@@ -525,7 +532,6 @@ function App() {
 						{data.map((e, i) => (
 							<div key={i} className='each-file'>
 								<div className='file-name'>
-									{/* <FileIcon /> */}
 									<img height={30} alt='file_icon' src={file_icon} />
 									{truncate(e.name, 30)}
 								</div>
@@ -537,6 +543,7 @@ function App() {
 					</div>
 				</div>
 			</div>
+			<p style={{ color: "gray" }}>©Jackal Labs {new Date().getFullYear()}</p>
 		</div>
 	)
 }
