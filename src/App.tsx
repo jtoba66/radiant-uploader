@@ -584,7 +584,7 @@ function App() {
 						))}
 					</div>
 				</div>
-				<p className="col-double" style={{ color: "gray" }}>©Jackal Labs {new Date().getFullYear()}</p>
+				<p className="col-double windows-font" style={{ color: "gray" }}>Built with { "❤︎" }  by <a style={{ color: "gray" }} href="https://www.jackallabs.io/" target="_blank">Jackal Labs</a></p>
 			</div>
 			
 			<div className='footer windows-font'>
