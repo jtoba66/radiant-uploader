@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useMemo, ReactEventHandler } from "react"
 import { useState } from "react"
 import "./App.css"
 
+import Clock from "./components/Clock"
+
 import loading_cat from "./assets/loading_cat.gif"
 import loading_cat_smol from "./assets/loading_cat_smol.gif"
 import official_logo from "./assets/radiant_official_logo.png"
@@ -397,7 +399,9 @@ function App() {
 			<div className='header'>
 				<div>
 					<img alt='Official Radiant Logo' id='logo' src={official_logo} />
-					<p id='by-jkl'>by Jackal Labs</p>
+					<p id='by-jkl' className='windows-font'>
+						by Jackal Labs
+					</p>
 				</div>
 				<div>
 					<button
@@ -417,10 +421,13 @@ function App() {
 
 					{walletActive && (
 						<>
-							<p>{`Address: ${JKLAddress.slice(0, 6)}...${JKLAddress.slice(
-								-4
-							)}`}</p>
-							<p className='header'>Balance: {JKLBalance.toFixed(3)} JKL</p>
+							<p className='windows-font'>{`Address: ${JKLAddress.slice(
+								0,
+								6
+							)}...${JKLAddress.slice(-4)}`}</p>
+							<p className='windows-font'>
+								Balance: {JKLBalance.toFixed(3)} JKL
+							</p>
 						</>
 					)}
 					{noProviders && (
@@ -472,7 +479,9 @@ function App() {
 								<>
 									{/* <UploadIcon className='upload-icon' /> */}
 									<img alt='upload icon' width={50} src={upload_icon} />
-									<p>Drag and drop your file(s) here</p>
+									<p className='windows-font'>
+										Drag and drop your file(s) here
+									</p>
 									<p></p>
 									<button onClick={browseFilesButtonClick}>BROWSE FILES</button>
 								</>
@@ -527,7 +536,7 @@ function App() {
 						}}
 						className='title-bar'
 					>
-						<h2>File Manager</h2>
+						<h2 className='windows-font'>File Manager</h2>
 						<button onClick={newFolderClick}>New folder</button>
 					</div>
 					<div
@@ -561,7 +570,10 @@ function App() {
 									<img height={30} alt='file_icon' src={file_icon} />
 									{truncate(e.name, 30)}
 								</div>
-								<p className='view-online' onClick={() => openFile(e.name)}>
+								<p
+									className='view-online windows-font'
+									onClick={() => openFile(e.name)}
+								>
 									View online
 								</p>
 								<CopyIcon
@@ -574,6 +586,39 @@ function App() {
 				</div>
 			</div>
 			<p style={{ color: "gray" }}>©Jackal Labs {new Date().getFullYear()}</p>
+			<div className='footer windows-font'>
+				<div>
+					<a
+						href='https://twitter.com/Jackal_Protocol'
+						target='blank'
+						rel='noreferrer'
+					>
+						Twitter
+					</a>
+					<a
+						href='https://t.me/+rtuZnbTlHaIzNjVh'
+						target='blank'
+						rel='noreferrer'
+					>
+						Telegram
+					</a>
+					<a
+						href='https://discord.com/invite/5GKym3p6rj'
+						target='blank'
+						rel='noreferrer'
+					>
+						Discord
+					</a>
+					<a
+						href='https://github.com/JackalLabs/'
+						target='blank'
+						rel='noreferrer'
+					>
+						Github
+					</a>
+				</div>
+				<Clock />
+			</div>
 		</div>
 	)
 }

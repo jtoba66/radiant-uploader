@@ -1,3 +1,4 @@
+
 html{
  background: #eeeeee;
 }
@@ -6,6 +7,10 @@ html{
 }
 h1,p{
   margin: 10px;
+}
+
+.windows-font{
+  font-family: 'windows95';
 }
 
 h3{
@@ -46,6 +51,7 @@ button{
   padding: 8px 12px;
   text-shadow: 0 0 #222;
   height: fit-content;
+  font-family: 'windows95';
 }
 
 button:not(:disabled):hover{
@@ -199,7 +205,7 @@ z-index: 1;
   color: #d2d2d2;;
   border: 1px solid  #d2d2d2;
   border-radius: 10px;
-  padding: 3px 8px;
+  padding: 5px 10px;
 
   box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #fff, inset -2px -2px grey, inset 2px 2px #dfdfdf;
   border: none;
@@ -208,8 +214,7 @@ z-index: 1;
   text-shadow: 0 0 #222;
   background: silver;
   color:black;
-  font-size: 14px;
-  font-weight: 300;
+  font-size: 15px;
 }
 .view-online:hover{
   background-color: #ff6a00;
@@ -246,4 +251,45 @@ z-index: 1;
 
 .each-folder:active{
   border: 1px dotted grey;
+}
+
+.footer{
+  background: silver;
+  display: grid;
+  grid-template-columns: 5fr 1fr;
+  align-items: center;
+
+  background-color: rgb(195, 199, 203);
+  position: fixed;
+  width: 100vw;
+  bottom: 0px;
+  box-shadow: rgb(255, 255, 255) 0px 0px 0px 2px;
+  margin:0;
+}
+
+
+.footer a{
+  margin: 0 20px;
+  padding: 10px 5px ;
+  text-decoration: none;
+  color: black;
+  font-weight: bold;
+}
+
+.footer a:hover{
+  background: #505050;
+  color:white;
+}
+
+.clock{
+  float:right;
+  min-width: 50px;
+  margin-right:10px;
+  padding: 6px 5px;
+  cursor: none;
+  align-items: center;
+  border-width: 1px 1.5px 1.5px 1px;
+  border-color: rgba(0, 0, 0, 0.5) rgb(255, 255, 255) rgb(255, 255, 255) rgba(0, 0, 0, 0.5);
+  border-style: solid;
+
 }
