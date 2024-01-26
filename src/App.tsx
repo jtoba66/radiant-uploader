@@ -541,7 +541,7 @@ function App() {
 									</div>
 								))}
 						</div>
-						{data.length === 0 && folders.length === 0 && (
+						{wallet && data.length === 0 && folders.length === 0 && (
 							<div className='john'>
 								<img alt='john travolta' height='100' src={john} />
 								<p>there's nothing here</p>

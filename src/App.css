@@ -87,7 +87,6 @@ button:disabled, .blue-btn:disabled{
   display:grid;
   grid-template-columns: 1fr 3fr;
   gap: 0.5rem;
-  max-height: 80vh;
 }
 
 
