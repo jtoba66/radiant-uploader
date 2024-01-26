@@ -4,6 +4,9 @@ html{
 }
 .App {
   text-align: center;
+  display: flex;
+  height: 100vh;
+  flex-direction: column;
 }
 h1,p{
   margin: 10px;
@@ -89,10 +92,23 @@ button:disabled, .blue-btn:disabled{
   justify-content: space-between;
 }
 .main-body{
-  margin: 1rem 0.5rem;
+  margin: 1rem 0.5rem 0.5rem 0.5rem;
   display:grid;
   grid-template-columns: 1fr 3fr;
+  grid-auto-rows: 1fr min-content;
   gap: 0.5rem;
+  flex-grow: 1;
+}
+.total-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+
+}
+.col-double {
+  grid-column: span 2;
 }
 
 
@@ -105,7 +121,7 @@ button:disabled, .blue-btn:disabled{
 
 .right{
   display:grid;
-  grid-template-rows: 1fr 50px 10fr;
+  grid-template-rows: min-content 50px 10fr;
 }
 
 .sick-border{
@@ -120,6 +136,7 @@ button:disabled, .blue-btn:disabled{
   align-items: center;
   padding: 1rem;
   margin-bottom: 0.5rem;
+  max-height: min-content;
 }
 
 
@@ -256,11 +273,11 @@ z-index: 1;
 .footer{
   background: silver;
   display: grid;
-  grid-template-columns: 5fr 1fr;
+  grid-template-columns: 100px 5fr 100px;
   align-items: center;
 
   background-color: rgb(195, 199, 203);
-  position: fixed;
+  /* position: fixed; */
   width: 100vw;
   bottom: 0px;
   box-shadow: rgb(255, 255, 255) 0px 0px 0px 2px;

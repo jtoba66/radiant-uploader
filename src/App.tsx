@@ -436,7 +436,7 @@ function App() {
 				</div>
 			</div>
 			{loading && <h2>LOADING...</h2>}
-			{wallet == null && <h3>Please connect your wallet</h3>}
+			{wallet == null && <h3 className="total-center">Please connect your wallet</h3>}
 			<div className={"main-body " + (wallet == null ? "blurry" : "")}>
 				{/* LEFT */}
 				<div
@@ -584,9 +584,11 @@ function App() {
 						))}
 					</div>
 				</div>
+				<p className="col-double" style={{ color: "gray" }}>©Jackal Labs {new Date().getFullYear()}</p>
 			</div>
-			<p style={{ color: "gray" }}>©Jackal Labs {new Date().getFullYear()}</p>
+			
 			<div className='footer windows-font'>
+				<div></div>
 				<div>
 					<a
 						href='https://twitter.com/Jackal_Protocol'
