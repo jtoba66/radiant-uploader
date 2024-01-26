@@ -307,7 +307,15 @@ function App() {
 			let filesAndFolders = await getFilesAsync(e.dataTransfer)
 			// let files = filesAndFolders.files
 			// let folders = filesAndFolders.folders
-			console.log("FINAL:", filesAndFolders)
+			// console.log("FINAL:", filesAndFolders)
+			console.log("--->upload entire file tree will be added later<---")
+			let selected: File[] = []
+			for (let each in filesAndFolders) {
+				let arr = filesAndFolders[each]
+				let filter = arr.filter((file) => !file.name.includes(".DS_Store"))
+				filter.forEach((e) => selected.push(e))
+			}
+			setSelectedFiles(selected)
 
 			// filter out .DS_Store files
 			// files = files.filter((file) => !file.name.includes(".DS_Store"))
