@@ -7,6 +7,7 @@ import Clock from "./components/Clock"
 import loading_cat from "./assets/loading_cat.gif"
 import loading_cat_smol from "./assets/loading_cat_smol.gif"
 import official_logo from "./assets/radiant_official_logo.png"
+import jackal_logo from "./assets/Jackal_icon.png"
 import file_icon from "./assets/file.png"
 import upload_icon from "./assets/upload.png"
 import folder_icon from "./assets/folder_close.png"
@@ -588,7 +589,9 @@ function App() {
 			</div>
 			
 			<div className='footer windows-font'>
-				<div></div>
+				<a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" style={{display: "flex", margin: "5px", marginLeft: "10px", padding: "2px", height: "50px", width: "min-content", cursor: "pointer"}}>
+					<img alt='Jackal Logo' id='jkl_logo' src={jackal_logo} />
+				</a>
 				<div>
 					<a
 						href='https://twitter.com/Jackal_Protocol'

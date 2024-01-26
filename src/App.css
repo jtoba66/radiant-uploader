@@ -12,6 +12,11 @@ h1,p{
   margin: 10px;
 }
 
+#jkl_logo {
+  margin-top: auto;
+  margin-bottom: auto;
+  height: 100%;
+}
 
 .windows-font{
   font-family: 'windows95';
