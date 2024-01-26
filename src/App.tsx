@@ -589,7 +589,7 @@ function App() {
 			</div>
 			
 			<div className='footer windows-font'>
-				<a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" style={{display: "flex", margin: "5px", marginLeft: "10px", padding: "2px", height: "50px", width: "min-content", cursor: "pointer"}}>
+				<a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" style={{display: "flex", margin: "5px", marginLeft: "10px", padding: "2px", height: "35px", width: "min-content", cursor: "pointer"}}>
 					<img alt='Jackal Logo' id='jkl_logo' src={jackal_logo} />
 				</a>
 				<div>
