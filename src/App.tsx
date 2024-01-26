@@ -9,6 +9,8 @@ import file_icon from "./assets/file.png"
 import upload_icon from "./assets/upload.png"
 import folder_icon from "./assets/folder_close.png"
 import folder_open from "./assets/folder_open.png"
+import john from "./assets/john-travolta.gif"
+import { ReactComponent as CopyIcon } from "./assets/copy-icon.svg"
 
 import type {
 	IWalletConfig,
@@ -68,7 +70,7 @@ function App() {
 		let trackWallet = await WalletHandler.trackWallet(walletConfig)
 		setWallet(trackWallet)
 
-		let jklAddress = await trackWallet.getJackalAddress()
+		let jklAddress = trackWallet.getJackalAddress()
 		setJKLAddress(jklAddress)
 
 		let trackIo = await FileIo.trackIo(trackWallet, ioVersion)
@@ -255,8 +257,17 @@ function App() {
 	}
 
 	const openFile = (fileName: string) => {
-		if (wallet == null) {
+		let link = getJackalLink(fileName)
+		const w = window.open(link, "_blank")
+		if (w == null) {
 			return
+		}
+		w.focus()
+	}
+
+	const getJackalLink = (fileName: string): string => {
+		if (wallet == null) {
+			return ""
 		}
 		const link =
 			// "https://testnet.jackal.link/p/" +
@@ -266,11 +277,8 @@ function App() {
 			path +
 			"/" +
 			fileName
-		const w = window.open(link, "_blank")
-		if (w == null) {
-			return
-		}
-		w.focus()
+
+		return link
 	}
 
 	//Drag n Drop
@@ -344,6 +352,10 @@ function App() {
 		console.log("navigationClick", newPath)
 		setPath("")
 		loadFolder(newPath, true)
+	}
+	const copyToClipboard = (fileName: string) => {
+		const link = getJackalLink(fileName)
+		navigator.clipboard.writeText(link)
 	}
 
 	useMemo(() => {
@@ -529,6 +541,12 @@ function App() {
 									</div>
 								))}
 						</div>
+						{data.length === 0 && folders.length === 0 && (
+							<div className='john'>
+								<img alt='john travolta' height='100' src={john} />
+								<p>there's nothing here</p>
+							</div>
+						)}
 						{data.map((e, i) => (
 							<div key={i} className='each-file'>
 								<div className='file-name'>
@@ -538,6 +556,10 @@ function App() {
 								<p className='view-online' onClick={() => openFile(e.name)}>
 									View online
 								</p>
+								<CopyIcon
+									className='copy-icon'
+									onClick={() => copyToClipboard(e.name)}
+								/>
 							</div>
 						))}
 					</div>

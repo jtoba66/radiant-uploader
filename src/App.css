@@ -174,8 +174,9 @@ z-index: 1;
 }
 .each-file{
   display: grid;
-  grid-template-columns: 3fr 1fr;
+  grid-template-columns: 3fr 1fr 0.3fr;
   margin: 15px auto;
+  align-items: center;
 }
 .each-file:hover{
   background-color: #060a77;
@@ -217,6 +218,16 @@ z-index: 1;
 }
 .view-online:active{
   background-color: #fef38d;
+}
+
+.copy-icon:hover {
+  cursor: pointer;
+}
+.copy-icon:active{
+  fill:#fef38d;
+}
+.each-file:hover path{
+  stroke: white;
 }
 
 .folder-container{
