@@ -112,7 +112,7 @@ function App() {
 		}
 
 		let request: any = {
-			bytes: count * 3,
+			bytes: count, // * 3, // TODO: v4 will fix this
 			duration: "1752000h",
 		}
 
