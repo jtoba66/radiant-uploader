@@ -16,6 +16,10 @@ h1,p{
   font-family: 'windows95';
 }
 
+.underline {
+  text-decoration: underline;
+}
+
 h3{
   position: absolute;
   right:50%;
