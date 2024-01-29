@@ -2,12 +2,11 @@ import React, { useEffect, useRef, useMemo, ReactEventHandler } from "react"
 import { useState } from "react"
 import "./App.css"
 
-import Clock from "./components/Clock"
+import Footer from "./components/Footer"
 
 import loading_cat from "./assets/loading_cat.gif"
 import loading_cat_smol from "./assets/loading_cat_smol.gif"
 import official_logo from "./assets/radiant_official_logo.png"
-import jackal_logo from "./assets/Jackal_icon.png"
 import file_icon from "./assets/file.png"
 import upload_icon from "./assets/upload.png"
 import folder_icon from "./assets/folder_close.png"
@@ -437,7 +436,9 @@ function App() {
 				</div>
 			</div>
 			{loading && <h2>LOADING...</h2>}
-			{wallet == null && <h3 className="total-center">Please connect your wallet</h3>}
+			{wallet == null && (
+				<h3 className='total-center'>Please connect your wallet</h3>
+			)}
 			<div className={"main-body " + (wallet == null ? "blurry" : "")}>
 				{/* LEFT */}
 				<div
@@ -585,45 +586,19 @@ function App() {
 						))}
 					</div>
 				</div>
-				<p className="col-double windows-font" style={{ color: "gray" }}>Built with { "❤︎" }  by <a style={{ color: "gray" }} href="https://www.jackallabs.io/" target="_blank">Jackal Labs</a></p>
+				<p className='col-double windows-font' style={{ color: "gray" }}>
+					Built with {"❤︎"} by{" "}
+					<a
+						style={{ color: "gray" }}
+						href='https://www.jackallabs.io/'
+						target='_blank'
+						rel='noreferrer'
+					>
+						Jackal Labs
+					</a>
+				</p>
 			</div>
-			
-			<div className='footer windows-font'>
-				<a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" style={{display: "flex", margin: "5px", marginLeft: "10px", padding: "2px", height: "35px", width: "min-content", cursor: "pointer"}}>
-					<img alt='Jackal Logo' id='jkl_logo' src={jackal_logo} />
-				</a>
-				<div>
-					<a
-						href='https://twitter.com/Jackal_Protocol'
-						target='blank'
-						rel='noreferrer'
-					>
-						Twitter
-					</a>
-					<a
-						href='https://t.me/+rtuZnbTlHaIzNjVh'
-						target='blank'
-						rel='noreferrer'
-					>
-						Telegram
-					</a>
-					<a
-						href='https://discord.com/invite/5GKym3p6rj'
-						target='blank'
-						rel='noreferrer'
-					>
-						Discord
-					</a>
-					<a
-						href='https://github.com/JackalLabs/'
-						target='blank'
-						rel='noreferrer'
-					>
-						Github
-					</a>
-				</div>
-				<Clock />
-			</div>
+			<Footer />
 		</div>
 	)
 }

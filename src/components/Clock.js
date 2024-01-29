@@ -34,7 +34,7 @@ export default function Clock() {
 
 	return (
 		<div>
-			<p className='clock'>{clock}</p>
+			<p className='clock'>{clock || "00:00"}</p>
 		</div>
 	)
 }

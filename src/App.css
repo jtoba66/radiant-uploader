@@ -12,12 +12,6 @@ h1,p{
   margin: 10px;
 }
 
-#jkl_logo {
-  margin-top: auto;
-  margin-bottom: auto;
-  height: 100%;
-}
-
 .windows-font{
   font-family: 'windows95';
 }
@@ -314,5 +308,21 @@ z-index: 1;
   border-width: 1px 1.5px 1.5px 1px;
   border-color: rgba(0, 0, 0, 0.5) rgb(255, 255, 255) rgb(255, 255, 255) rgba(0, 0, 0, 0.5);
   border-style: solid;
-
 }
+
+#jkl_logo {
+  margin-top: auto;
+  margin-bottom: auto;
+  height: 80%;
+}
+
+.start-btn {
+  box-shadow: rgb(255, 255, 255) 1px 1px 0px 1px inset, rgb(134, 138, 142) 0px 0px 0px 1px inset, rgb(0, 0, 0) 1px 1px 0px 0px;
+  border: none;
+  background: rgb(195, 199, 203);
+  width: 80px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
