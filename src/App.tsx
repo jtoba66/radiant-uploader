@@ -36,11 +36,6 @@ type FileData = {
 	fid: string
 }
 
-// When user switches wallet
-window.addEventListener("keplr_keystorechange", () => {
-	window.location.reload()
-})
-
 const ioVersion = "1.1.2"
 // const path = "radiant"
 
@@ -61,6 +56,11 @@ function App() {
 	const [path, setPath] = useState<string>("radiant")
 	const [navigation, setNavigation] = useState<any>([])
 	const [noProviders, setNoProviders] = useState(false)
+
+	// When user switches wallet
+	window.addEventListener("keplr_keystorechange", () => {
+		window.location.reload()
+	})
 
 	const initWallet = async () => {
 		setLoading(true)
