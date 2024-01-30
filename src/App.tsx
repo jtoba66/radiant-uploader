@@ -60,12 +60,10 @@ function App() {
 
 	useEffect(() => {
 		if (wallet) {
-			console.log(selectedFiles, '- Has changed')
+			console.log(selectedFiles, "- Has changed")
 			updatePrice(wallet, selectedFiles)
 		}
-        
-    },[selectedFiles]) // <-- here put the parameter to listen, react will re-render component when your state will be changed
-
+	}, [selectedFiles]) // <-- here put the parameter to listen, react will re-render component when your state will be changed
 
 	// When user switches wallet
 	window.addEventListener("keplr_keystorechange", () => {
@@ -100,7 +98,6 @@ function App() {
 		setLoading(false)
 	}
 	const updatePrice = async (wallet: IWalletHandler, files: File[]) => {
-		
 		if (files.length == 0) {
 			setCost(0)
 			return
@@ -113,10 +110,12 @@ function App() {
 
 		let request: any = {
 			bytes: count, // * 3, // TODO: v4 will fix this
-			duration: "1752000h",
+			duration: "1752000h"
 		}
 
-		let price = (await wallet.getQueryHandler().storageQuery.queryPriceCheck(request)).value.price
+		let price = (
+			await wallet.getQueryHandler().storageQuery.queryPriceCheck(request)
+		).value.price
 
 		let JKLPrice = price / 1000000
 
@@ -270,9 +269,6 @@ function App() {
 	const connectButtonClick = async (e: any) => {
 		e.target.disabled = true
 		await initWallet()
-		if (!wallet) {
-			initWallet()
-		}
 		checkAvailableProviders()
 		e.target.disabled = false
 	}
@@ -494,7 +490,10 @@ function App() {
 									<div className='uploading-queue windows-font'>
 										<h4>Uploading queue:</h4>
 										{selectedFiles.map((e, i) => (
-											<li className="windows-font" key={i}> {truncate(e.name, 20)}</li>
+											<li className='windows-font' key={i}>
+												{" "}
+												{truncate(e.name, 20)}
+											</li>
 										))}
 									</div>
 									<button onClick={uploadButtonClick}>Upload</button>
@@ -521,7 +520,10 @@ function App() {
 									<button onClick={browseFilesButtonClick}>BROWSE FILES</button>
 								</>
 							)}
-							<span style={{marginTop: "20px"}} className="windows-font">Upload Cost: <span className="underline">{cost.toFixed(2)}</span> JKL</span>
+							<span style={{ marginTop: "20px" }} className='windows-font'>
+								Upload Cost:{" "}
+								<span className='underline'>{cost.toFixed(2)}</span> JKL
+							</span>
 							<input
 								type='file'
 								id='file'
