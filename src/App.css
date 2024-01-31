@@ -319,7 +319,6 @@ z-index: 1;
   min-width: 50px;
   margin-right:10px;
   padding: 6px 5px;
-  cursor: none;
   align-items: center;
   border-width: 1px 1.5px 1.5px 1px;
   border-color: rgba(0, 0, 0, 0.5) rgb(255, 255, 255) rgb(255, 255, 255) rgba(0, 0, 0, 0.5);
@@ -340,5 +339,6 @@ z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 }
 
