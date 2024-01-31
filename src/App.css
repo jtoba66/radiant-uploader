@@ -131,7 +131,7 @@ button:disabled, .blue-btn:disabled{
 .sick-border{
   border: 1px solid #373737;
   box-shadow: 5px 5px 10px #C0C0C0;
-  padding-top: 10px;
+  /* padding-top: 10px; */
   box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #dfdfdf, inset -2px -2px grey, inset 2px 2px #fff;
 }
 
@@ -201,8 +201,9 @@ z-index: 1;
 .each-file{
   display: grid;
   grid-template-columns: 3fr 1fr 0.3fr;
-  margin: 15px auto;
+  margin: 15px 1.25rem;
   align-items: center;
+  justify-items: right;
 }
 .each-file:hover{
   background-color: #060a77;
@@ -214,6 +215,7 @@ z-index: 1;
   align-items: center;
   gap: 1rem;
   margin-left: 10px;
+  width: 100%;
 }
 
 .each-file svg{
@@ -243,6 +245,10 @@ z-index: 1;
 }
 .view-online:active{
   background-color: #fef38d;
+}
+
+.copy-icon {
+  justify-self: center;
 }
 
 .copy-icon:hover {

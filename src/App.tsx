@@ -430,7 +430,7 @@ function App() {
 				<div>
 					<img alt='Official Radiant Logo' id='logo' src={official_logo} />
 					<p id='by-jkl' className='windows-font'>
-						by Jackal Labs
+						public storage forever
 					</p>
 				</div>
 				<div>
@@ -581,7 +581,8 @@ function App() {
 					<div
 						className={"file-manager sick-border" + (loading ? "blurry" : "")}
 					>
-						<div className='folder-container'>
+						{(folders.length !== 0 &&
+							<div className='folder-container' >
 							{folders &&
 								folders.map((e, i) => (
 									<div key={i} className='each-folder'>
@@ -597,6 +598,9 @@ function App() {
 									</div>
 								))}
 						</div>
+						)
+						}
+						
 						{wallet && data.length === 0 && folders.length === 0 && (
 							<div className='john'>
 								<img alt='john travolta' height='100' src={john} />
