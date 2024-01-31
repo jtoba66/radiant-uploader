@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useMemo, ReactEventHandler } from "react"
 import { useState } from "react"
 import "./App.css"
 
+import EachFile from "./components/EachFile"
 import Footer from "./components/Footer"
 
 import loading_cat from "./assets/loading_cat.gif"
@@ -602,40 +603,20 @@ function App() {
 								<p>there's nothing here</p>
 							</div>
 						)}
+
+						{/* EACH FILE */}
 						{data.map((e, i) => (
-							<div key={i} className='each-file'>
-								<div className='file-name'>
-									<img height={30} alt='file_icon' src={file_icon} />
-									{truncate(e.name, 30)}
-								</div>
-								<p
-									className='view-online windows-font'
-									onClick={() => openFile(e.name)}
-								>
-									View online
-								</p>
-								<img
-									alt='copy'
-									src={copy_icon}
-									className='copy-icon'
-									onClick={() => copyToClipboard(e.name)}
-								/>
-							</div>
+							<EachFile
+								key={i}
+								file={e}
+								copyToClipboard={copyToClipboard}
+								openFile={openFile}
+							/>
 						))}
 					</div>
 				</div>
-				<p className='col-double windows-font' style={{ color: "gray" }}>
-					Built with {"❤︎"} by{" "}
-					<a
-						style={{ color: "gray" }}
-						href='https://www.jackallabs.io/'
-						target='_blank'
-						rel='noreferrer'
-					>
-						Jackal Labs
-					</a>
-				</p>
 			</div>
+
 			<Footer />
 		</div>
 	)
