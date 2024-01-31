@@ -11,8 +11,8 @@ import file_icon from "./assets/file.png"
 import upload_icon from "./assets/upload.png"
 import folder_icon from "./assets/folder_close.png"
 import folder_open from "./assets/folder_open.png"
+import copy_icon from "./assets/copy_icon.png"
 import john from "./assets/john-travolta.gif"
-import { ReactComponent as CopyIcon } from "./assets/copy-icon.svg"
 
 import type {
 	IWalletConfig,
@@ -614,7 +614,9 @@ function App() {
 								>
 									View online
 								</p>
-								<CopyIcon
+								<img
+									alt='copy'
+									src={copy_icon}
 									className='copy-icon'
 									onClick={() => copyToClipboard(e.name)}
 								/>

@@ -246,11 +246,17 @@ z-index: 1;
 }
 
 .copy-icon:hover {
+  border: 1px dotted grey;
   cursor: pointer;
 }
+
 .copy-icon:active{
-  fill:#fef38d;
+  border-width:  1px;
+  border-color: rgba(0, 0, 0, 0.5) rgb(255, 255, 255) rgb(255, 255, 255) rgba(0, 0, 0, 0.5);
+  border-style: solid;
+  background: gray;
 }
+
 .each-file:hover path{
   stroke: white;
 }
