@@ -525,7 +525,7 @@ function App() {
 							)}
 							<span style={{ marginTop: "20px" }} className='windows-font'>
 								Upload Cost:{" "}
-								<span className='underline'>{cost.toFixed(2)}</span> JKL
+								<span className={cost === 0 ? "" : "rainbow rainbow_text_animated"}>{cost.toFixed(2)} JKL</span>
 							</span>
 							<input
 								type='file'
