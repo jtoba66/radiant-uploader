@@ -467,7 +467,7 @@ function App() {
 					)}
 				</div>
 			</div>
-			{loading && <h2>LOADING...</h2>}
+			{/* {loading && <h2>LOADING...</h2>} */}
 			{wallet == null && (
 				<h3 className='total-center'>Please connect your wallet</h3>
 			)}
@@ -563,12 +563,7 @@ function App() {
 							)
 						})}
 					</div>
-					{wallet && loading && (
-						<div className='loading_cat'>
-							<img alt='cat is loading pls wait' src={loading_cat} />
-							<p>Pls hold...</p>
-						</div>
-					)}
+					
 					<div
 						style={{
 							display: "flex",
@@ -580,10 +575,8 @@ function App() {
 						<h2 className='windows-font'>File Manager</h2>
 						<button onClick={newFolderClick}>New folder</button>
 					</div>
-					<div
-						className={"file-manager sick-border" + (loading ? "blurry" : "")}
-					>
-						{(folders.length !== 0 &&
+					<div className={"file-manager sick-border "}>
+						{(folders.length !== 0 && !loading &&
 							<div className='folder-container' >
 							{folders &&
 								folders.map((e, i) => (
@@ -602,16 +595,21 @@ function App() {
 						</div>
 						)
 						}
+						{wallet && loading && (
+							<div className='loading_cat'>
+								<img alt='cat is loading pls wait' src={loading_cat} />
+								<p>Pls hold...</p>
+							</div>
+						)}
 						
-						{wallet && data.length === 0 && folders.length === 0 && (
+						{!loading && wallet && data.length === 0 && folders.length === 0 && (
 							<div className='john'>
 								<img alt='john travolta' height='100' src={john} />
 								<p>there's nothing here</p>
 							</div>
 						)}
 
-						{/* EACH FILE */}
-						{data.map((e, i) => (
+						{!loading && data.map((e, i) => (
 							<EachFile
 								key={i}
 								file={e}
@@ -619,6 +617,7 @@ function App() {
 								openFile={openFile}
 							/>
 						))}
+
 					</div>
 				</div>
 			</div>

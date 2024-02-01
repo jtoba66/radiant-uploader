@@ -36,6 +36,10 @@ h3{
   margin-top: -15px;
 }
 
+.john {
+  margin-top: 40px;
+}
+
 button{
   /* padding: 10px 15px;
   border-radius: 10px;
@@ -178,10 +182,7 @@ button:disabled, .blue-btn:disabled{
 }
 
 .loading_cat{
-position:fixed;
-top: 30%;
-left: 45%;
-z-index: 1;
+  margin-top: 40px;
 }
 
 .uploading-queue{
