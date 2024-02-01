@@ -72,7 +72,6 @@ function App() {
 	})
 
 	const initWallet = async () => {
-		setLoading(true)
 		const walletConfig: IWalletConfig = {
 			selectedWallet: "keplr",
 			// ...testnet
@@ -128,13 +127,15 @@ function App() {
 		setJKLBalance(parseInt(balance?.amount || "0") / 1000000)
 	}
 	const loadRoot = async (wallet: IWalletHandler, fileIo: FileIo) => {
-		setLoading(true)
-		if (fileIo == null) {
-			return
-		}
 		if (wallet == null) {
 			return
 		}
+		setLoading(true)
+
+		if (fileIo == null) {
+			return
+		}
+		
 
 		setPath("radiant")
 
@@ -175,11 +176,12 @@ function App() {
 		folderName: string,
 		navigation: boolean = false
 	) => {
-		setLoading(true)
-		if (fileIo == null) {
+		
+		if (wallet == null) {
 			return
 		}
-		if (wallet == null) {
+		setLoading(true)
+		if (fileIo == null) {
 			return
 		}
 
