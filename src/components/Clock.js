@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react"
 
-export default function Clock() {
+import jackal_logo from "../assets/Jackal_icon.png"
+
+export default function Clock({ JKLBalance }) {
 	const [clock, setClock] = useState(null)
 
 	const displayTime = () => {
@@ -33,8 +35,10 @@ export default function Clock() {
 	}, [])
 
 	return (
-		<div>
-			<p className='clock'>{clock || "00:00"}</p>
+		<div className='clock flex-this-div'>
+			<img alt='JKL Balance' height={20} src={jackal_logo} />
+			{JKLBalance.toFixed(3)}
+			<p className=''>{clock || "00:00"}</p>
 		</div>
 	)
 }

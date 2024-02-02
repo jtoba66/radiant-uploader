@@ -3,7 +3,12 @@ import React from "react"
 import Clock from "./Clock"
 import jackal_logo from "../assets/Jackal_icon.png"
 
-export default function Footer() {
+export default function Footer({
+	JKLBalance,
+	JKLAddress,
+	connectButtonClick,
+	walletActive
+}) {
 	return (
 		<>
 			<p className='col-double windows-font' style={{ color: "gray" }}>
@@ -19,7 +24,7 @@ export default function Footer() {
 			</p>
 			<div className='footer windows-font'>
 				<a
-					className='start-btn'
+					className='footer-btn'
 					href='https://www.youtube.com/watch?v=dQw4w9WgXcQ'
 					target='_blank'
 					style={{
@@ -66,7 +71,17 @@ export default function Footer() {
 						Github
 					</a>
 				</div>
-				<Clock />
+				{!walletActive ? (
+					<p onClick={connectButtonClick} className='footer-btn blue-btn'>
+						Connect
+					</p>
+				) : (
+					<p className='footer-btn'>
+						{`${JKLAddress.slice(0, 6)}...${JKLAddress.slice(-4)}`}
+					</p>
+				)}
+				<Clock JKLBalance={JKLBalance} />
+				{/* <div className='taskbar-divider'></div> */}
 			</div>
 		</>
 	)

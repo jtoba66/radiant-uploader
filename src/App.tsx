@@ -8,11 +8,9 @@ import Footer from "./components/Footer"
 import loading_cat from "./assets/loading_cat.gif"
 import loading_cat_smol from "./assets/loading_cat_smol.gif"
 import official_logo from "./assets/radiant_official_logo.png"
-import file_icon from "./assets/file.png"
 import upload_icon from "./assets/upload.png"
 import folder_icon from "./assets/folder_close.png"
 import folder_open from "./assets/folder_open.png"
-import copy_icon from "./assets/copy_icon.png"
 import john from "./assets/john-travolta.gif"
 
 import type {
@@ -135,7 +133,6 @@ function App() {
 		if (fileIo == null) {
 			return
 		}
-		
 
 		setPath("radiant")
 
@@ -176,7 +173,6 @@ function App() {
 		folderName: string,
 		navigation: boolean = false
 	) => {
-		
 		if (wallet == null) {
 			return
 		}
@@ -436,13 +432,13 @@ function App() {
 					</p>
 				</div>
 				<div>
-					<button
+					{/* <button
 						className='blue-btn'
 						onClick={(e) => connectButtonClick(e)}
 						disabled={walletActive ? true : false}
 					>
 						{walletActive ? "Connected" : "Connect Wallet"}
-					</button>
+					</button> */}
 					{/* <button
 						onClick={(e) => {
 							testFunction()
@@ -451,7 +447,7 @@ function App() {
 						Test Button
 					</button> */}
 
-					{walletActive && (
+					{/* {walletActive && (
 						<>
 							<p className='windows-font'>{`Address: ${JKLAddress.slice(
 								0,
@@ -461,7 +457,7 @@ function App() {
 								Balance: {JKLBalance.toFixed(3)} JKL
 							</p>
 						</>
-					)}
+					)} */}
 					{noProviders && (
 						<p style={{ color: "red" }}>Providers not available</p>
 					)}
@@ -525,7 +521,11 @@ function App() {
 							)}
 							<span style={{ marginTop: "20px" }} className='windows-font'>
 								Upload Cost:{" "}
-								<span className={cost === 0 ? "" : "rainbow rainbow_text_animated"}>{cost.toFixed(2)} JKL</span>
+								<span
+									className={cost === 0 ? "" : "rainbow rainbow_text_animated"}
+								>
+									{cost.toFixed(2)} JKL
+								</span>
 							</span>
 							<input
 								type='file'
@@ -563,7 +563,7 @@ function App() {
 							)
 						})}
 					</div>
-					
+
 					<div
 						style={{
 							display: "flex",
@@ -576,53 +576,62 @@ function App() {
 						<button onClick={newFolderClick}>New folder</button>
 					</div>
 					<div className={"file-manager sick-border "}>
-						{(folders.length !== 0 && !loading &&
-							<div className='folder-container' >
-							{folders &&
-								folders.map((e, i) => (
-									<div key={i} className='each-folder'>
-										<img
-											alt='folder'
-											src={folder_icon}
-											width={50}
-											onMouseOver={(e) => (e.currentTarget.src = folder_open)}
-											onMouseLeave={(e) => (e.currentTarget.src = folder_icon)}
-											onClick={() => loadFolder(e)}
-										/>
-										<div className='folder-name'>{e}</div>
-									</div>
-								))}
-						</div>
-						)
-						}
+						{folders.length !== 0 && !loading && (
+							<div className='folder-container'>
+								{folders &&
+									folders.map((e, i) => (
+										<div key={i} className='each-folder'>
+											<img
+												alt='folder'
+												src={folder_icon}
+												width={50}
+												onMouseOver={(e) => (e.currentTarget.src = folder_open)}
+												onMouseLeave={(e) =>
+													(e.currentTarget.src = folder_icon)
+												}
+												onClick={() => loadFolder(e)}
+											/>
+											<div className='folder-name'>{e}</div>
+										</div>
+									))}
+							</div>
+						)}
 						{wallet && loading && (
 							<div className='loading_cat'>
 								<img alt='cat is loading pls wait' src={loading_cat} />
 								<p>Pls hold...</p>
 							</div>
 						)}
-						
-						{!loading && wallet && data.length === 0 && folders.length === 0 && (
-							<div className='john'>
-								<img alt='john travolta' height='100' src={john} />
-								<p>there's nothing here</p>
-							</div>
-						)}
 
-						{!loading && data.map((e, i) => (
-							<EachFile
-								key={i}
-								file={e}
-								copyToClipboard={copyToClipboard}
-								openFile={openFile}
-							/>
-						))}
+						{!loading &&
+							wallet &&
+							data.length === 0 &&
+							folders.length === 0 && (
+								<div className='john'>
+									<img alt='john travolta' height='100' src={john} />
+									<p>there's nothing here</p>
+								</div>
+							)}
 
+						{!loading &&
+							data.map((e, i) => (
+								<EachFile
+									key={i}
+									file={e}
+									copyToClipboard={copyToClipboard}
+									openFile={openFile}
+								/>
+							))}
 					</div>
 				</div>
 			</div>
 
-			<Footer />
+			<Footer
+				walletActive={walletActive}
+				connectButtonClick={connectButtonClick}
+				JKLBalance={JKLBalance}
+				JKLAddress={JKLAddress}
+			/>
 		</div>
 	)
 }

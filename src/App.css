@@ -12,6 +12,12 @@ h1,p{
   margin: 10px;
 }
 
+.flex-this-div{
+  display:flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .windows-font{
   font-family: 'windows95';
 }
@@ -312,15 +318,16 @@ button:disabled, .blue-btn:disabled{
 .footer{
   background: silver;
   display: grid;
-  grid-template-columns: 100px 5fr 100px;
+  grid-template-columns: 100px 5fr auto auto auto;
   align-items: center;
-
-  background-color: rgb(195, 199, 203);
-  /* position: fixed; */
-  width: 100vw;
-  bottom: 0px;
-  box-shadow: rgb(255, 255, 255) 0px 0px 0px 2px;
   margin:0;
+
+  border-style: solid;
+  border-width: 2px;
+  border-color: rgb(254, 254, 254) rgb(10, 10, 10) rgb(10, 10, 10) rgb(254, 254, 254);
+  box-shadow: rgb(223, 223, 223) 1px 1px 0px 1px inset, rgb(132, 133, 132) -1px -1px 0px 1px inset;
+  box-sizing: border-box;
+  background: rgb(198, 198, 198);
 }
 
 
@@ -338,31 +345,66 @@ button:disabled, .blue-btn:disabled{
 }
 
 .clock{
-  float:right;
+  /* float:right; */
   min-width: 50px;
   margin-right:10px;
   padding: 6px 5px;
-  align-items: center;
-  border-width: 1px 1.5px 1.5px 1px;
-  border-color: rgba(0, 0, 0, 0.5) rgb(255, 255, 255) rgb(255, 255, 255) rgba(0, 0, 0, 0.5);
   border-style: solid;
+  border-width: 2px;
+  border-color: rgb(132, 133, 132) rgb(254, 254, 254) rgb(254, 254, 254) rgb(132, 133, 132);
+  box-sizing: border-box;
+  background: rgb(198, 198, 198);
+  color: rgb(10, 10, 10);
+  height: 35px;
+}
+
+.taskbar-divider{
+  display: inline-block;
+  box-sizing: border-box;
+  height: 35px;
+  width: 5px;
+  border-width: 2px;
+  border-style: solid;
+  border-color: rgb(254, 254, 254) rgb(132, 133, 132) rgb(132, 133, 132) rgb(254, 254, 254);
+  background: rgb(198, 198, 198);
 }
 
 #jkl_logo {
   margin-top: auto;
   margin-bottom: auto;
-  height: 80%;
+  height: 25px;
 }
 
-.start-btn {
-  box-shadow: rgb(255, 255, 255) 1px 1px 0px 1px inset, rgb(134, 138, 142) 0px 0px 0px 1px inset, rgb(0, 0, 0) 1px 1px 0px 0px;
+
+.clock img{
+  height: 20px;
+  margin: 0 5px;
+}
+
+.footer-btn {
+  color: black;
+  /* box-shadow: rgb(255, 255, 255) 1px 1px 0px 1px inset, rgb(134, 138, 142) 0px 0px 0px 1px inset, rgb(0, 0, 0) 1px 1px 0px 0px; */
   border: none;
-  background: rgb(195, 199, 203);
+  /* background: rgb(195, 199, 203); */
   width: 80px !important;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+
+  border-style: solid;
+  border-width: 2px;
+  border-color: rgb(254, 254, 254) rgb(10, 10, 10) rgb(10, 10, 10) rgb(254, 254, 254);
+  box-shadow: rgb(223, 223, 223) 1px 1px 0px 1px inset, rgb(132, 133, 132) -1px -1px 0px 1px inset;
+  /* box-sizing: border-box; */
+  background: rgb(198, 198, 198);
+  height: 30px;
+  padding: 0 5px;
+}
+
+.footer-btn:active{
+  box-shadow: inset -1px -1px #fff, inset 1px 1px #0a0a0a, inset -2px -2px #dfdfdf, inset 2px 2px grey;
+  text-shadow: 1px 1px #fff;
 }
 
 .rainbow_text_animated {
