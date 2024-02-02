@@ -248,8 +248,28 @@ button:disabled, .blue-btn:disabled{
   background-color: #fef38d;
 }
 
+.copy-link{
+  position:relative;
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+}
+.copied-alert{
+  position: absolute;
+  bottom: 30px;
+  right: -20px;
+  color: black;
+  font-size: 14px;
+  background-color: #ffffe1;
+  white-space: nowrap;
+  padding: 4px 4px;
+  border: 1px solid black;
+  box-shadow: 0 2px 2px rgba(0,0,0,0.2), 0.3px 0.3px 1px rgba(0,0,0,0.4);
+}
+
 .copy-icon {
   justify-self: center;
+  margin-right: 1rem;
 }
 
 .copy-icon:hover {
@@ -258,15 +278,17 @@ button:disabled, .blue-btn:disabled{
 }
 
 .copy-icon:active{
-  border-width:  1px;
+  border-width:  0.5px;
   border-color: rgba(0, 0, 0, 0.5) rgb(255, 255, 255) rgb(255, 255, 255) rgba(0, 0, 0, 0.5);
   border-style: solid;
-  background: gray;
+  background: #4d4e8e;
+  padding: 3px;
 }
 
 .each-file:hover path{
   stroke: white;
 }
+
 
 .folder-container{
   display: flex;

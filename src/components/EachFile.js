@@ -22,6 +22,8 @@ const IconCollection = {
 }
 
 export default function EachFile({ file, copyToClipboard, openFile }) {
+	const [showAlert, setShowAlert] = React.useState(false)
+
 	let fileType = file.name.split(".")[1]
 
 	return (
@@ -40,12 +42,21 @@ export default function EachFile({ file, copyToClipboard, openFile }) {
 			>
 				View online
 			</p>
-			<img
-				alt='copy'
-				src={copy_icon}
-				className='copy-icon'
-				onClick={() => copyToClipboard(file.name)}
-			/>
+			<div className='copy-link'>
+				{showAlert && <p className='copied-alert'>Link copied</p>}
+				<img
+					alt='copy'
+					src={copy_icon}
+					className='copy-icon'
+					onClick={() => {
+						copyToClipboard(file.name)
+						setShowAlert(true)
+						setTimeout(() => {
+							setShowAlert(false)
+						}, 1000)
+					}}
+				/>
+			</div>
 		</div>
 	)
 }
