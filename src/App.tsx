@@ -59,6 +59,7 @@ function App() {
   const [noProviders, setNoProviders] = useState(false);
   const [cost, setCost] = useState<number>(0);
   const [startup, setStartup] = useState(true);
+  const [error, setError] = useState<string>("");
 
   useEffect(() => {
     if (wallet) {
@@ -69,7 +70,8 @@ function App() {
 
   // When user switches wallet
   window.addEventListener("keplr_keystorechange", () => {
-    window.location.reload();
+	console.log("wallet switched")
+    // window.location.reload();
   });
 
   const initWallet = async () => {
@@ -90,10 +92,19 @@ function App() {
     const listOfFolders = [path];
 
     // If folder doesn't exist, create folder
-    await trackIo.verifyFoldersExist(listOfFolders);
-
-    await loadRoot(trackWallet, trackIo);
+	try {
+		await trackIo.verifyFoldersExist(listOfFolders)
+	} catch (err:any) {
+		console.log(err)
+		console.log("AHHHHH")
+		setError(err.toString())
+	}
+		
+	await loadRoot(trackWallet, trackIo);
     await updateBalance(trackWallet);
+	
+
+    
 
     setWalletActive(true);
     setLoading(false);
@@ -427,11 +438,11 @@ function App() {
 
   return (
     <div className="App windows-font">
-      {startup && <div className="startup-frame">
+      {startup && <div className="startup-frame ">
 	  	<div className="title-bar">
             <h2 className="windows-font">Radiant Startup</h2>
           </div>
-		  <div className="startup-page sick-border">
+		  <div className="startup-page sick-border frame-page-size">
 		<h1>Welcome to Radiant</h1>
 		<p><span className="italics">Decentralized file publishing - enduring, secure, and truly yours.</span></p>
 		<ul>
@@ -443,6 +454,16 @@ function App() {
 		</ul>
 		<p><span className="bold">Embrace longevity. Embrace Radiant.</span></p>
 		<button className='blue-btn' onClick={(e) => setStartup(false)} >Enter Radiant</button>
+		</div>
+		</div>}
+		{error.length > 0 && <div className="startup-frame">
+	  	<div className="title-bar">
+            <h2 className="windows-font">Error</h2>
+          </div>
+		  <div className="startup-page sick-border">
+		<h1>Something went wrong</h1>
+		<p>{error}</p>
+		<button className='blue-btn' onClick={(e) => setError("")} >Close</button>
 		</div>
 		</div>}
       <div className="header">
@@ -485,8 +506,17 @@ function App() {
         </div>
       </div>
       {/* {loading && <h2>LOADING...</h2>} */}
-      {wallet == null && (
-        <h3 className="total-center">Please connect your wallet</h3>
+      {wallet == null && !startup && (
+		<div className="startup-frame" style={{minWidth:"400px"}}>
+		<div className="title-bar">
+		  <h2 className="windows-font wallet-header">Wallet</h2>
+		</div>
+		<div className="startup-page sick-border">
+	  <h1 className="wallet-text">Please connect your wallet</h1>
+	  <button className='blue-btn popup-connect-btn' onClick={(e) => connectButtonClick(e)} >Connect</button>
+	  </div>
+	  </div>
+        
       )}
       <div className={"main-body " + (wallet == null ? "blurry" : "")}>
         {/* LEFT */}

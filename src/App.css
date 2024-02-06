@@ -431,20 +431,20 @@ button:disabled, .blue-btn:disabled{
 Startup Page
 */
 
-.startup-page {
-  
+.frame-page-size {
   height: min-content;
   width: 50vw;
   min-width: 800px;
+  font-size: 1.4em;
+  padding: 40px;
+}
 
+.startup-page {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 
-  font-size: 1.4em;
-
-  padding: 40px;
   box-sizing: border-box;
 }
 
@@ -455,7 +455,6 @@ Startup Page
   transform: translate(-50%, -60%);
   background: #dddddd;
   z-index: 100;
-
 }
 
 .startup-page > ul {
@@ -482,4 +481,19 @@ Startup Page
 
 button {
   cursor: pointer;
+}
+
+.popup-connect-btn {
+  margin-bottom: 20px;
+  margin-top: 10px;
+}
+
+.wallet-header {
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+.wallet-text {
+  margin-top: 20px;
+  font-size: 1.4em;
 }
