@@ -297,6 +297,13 @@ function App() {
     setSelectedFiles(selected);
   };
   const uploadButtonClick = () => {
+
+    console.log(JKLBalance, cost, JKLBalance < cost)
+    if (JKLBalance < cost) {
+      setError(`Cannot upload files: Not enough JKL tokens`)
+      return
+    }
+
     handleUpload(selectedFiles);
   };
 
@@ -458,13 +465,14 @@ function App() {
 		</div>
 		</div>}
 		{error.length > 0 && <div className="startup-frame">
+      <div className="blocker"></div>
 	  	<div className="title-bar">
-            <h2 className="windows-font">Error</h2>
+            <h2 className="windows-font wallet-header">Error</h2>
           </div>
 		  <div className="startup-page sick-border">
-		<h1>Something went wrong</h1>
+		<h1 className="wallet-text">Something went wrong</h1>
 		<p>{error}</p>
-		<button className='blue-btn' onClick={(e) => setError("")} >Close</button>
+		<button className='blue-btn popup-connect-btn' onClick={(e) => setError("")} >Close</button>
 		</div>
 		</div>}
       <div className="header">
