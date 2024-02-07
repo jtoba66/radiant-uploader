@@ -318,7 +318,7 @@ button:disabled, .blue-btn:disabled{
 .footer{
   background: silver;
   display: grid;
-  grid-template-columns: 100px 5fr auto auto auto;
+  grid-template-columns: 300px auto 120px 180px;
   align-items: center;
   margin:0;
 
@@ -496,4 +496,8 @@ button {
 .wallet-text {
   margin-top: 20px;
   font-size: 1.4em;
+}
+
+.small {
+  font-size: 0.8em;
 }

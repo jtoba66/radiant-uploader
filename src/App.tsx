@@ -453,6 +453,7 @@ function App() {
 			<li>Use JKL tokens to store files forever.</li>
 		</ul>
 		<p><span className="bold">Embrace longevity. Embrace Radiant.</span></p>
+    <p><span className="small">Please disable your ad-blocker if you have one for the best experience.</span></p>
 		<button className='blue-btn' onClick={(e) => setStartup(false)} >Enter Radiant</button>
 		</div>
 		</div>}
