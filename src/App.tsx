@@ -505,8 +505,18 @@ function App() {
 						public storage forever
 					</p>
 				</div>
-				<div>
-					<a
+				<div className="button-menu">
+					
+					{!walletActive ? (
+					<span onClick={connectButtonClick} className='button windows-font'>
+						Connect
+					</span>
+				) : (
+					<span className='button windows-font'>
+						{`${JKLAddress.slice(0, 6)}...${JKLAddress.slice(-4)}`}
+					</span>
+				)}
+				<a
 						className='button windows-font'
 						href='https://app.osmosis.zone/?to=JKL&from=USDC'
 						target='_blank'
@@ -514,6 +524,8 @@ function App() {
 					>
 						Buy JKL
 					</a>
+					
+					
 					{/* <button
 						className='blue-btn'
 						onClick={(e) => connectButtonClick(e)}
@@ -717,6 +729,7 @@ function App() {
 									openFile={openFile}
 								/>
 							))}
+							
 					</div>
 				</div>
 			</div>

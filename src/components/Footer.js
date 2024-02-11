@@ -71,15 +71,7 @@ export default function Footer({
 						Github
 					</a>
 				</div>
-				{!walletActive ? (
-					<p onClick={connectButtonClick} className='footer-btn blue-btn'>
-						Connect
-					</p>
-				) : (
-					<p className='footer-btn'>
-						{`${JKLAddress.slice(0, 6)}...${JKLAddress.slice(-4)}`}
-					</p>
-				)}
+				
 				<Clock JKLBalance={JKLBalance} />
 				{/* <div className='taskbar-divider'></div> */}
 			</div>

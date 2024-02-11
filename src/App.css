@@ -70,6 +70,7 @@ button, .button{
   text-shadow: 0 0 #222;
   height: fit-content;
   font-family: 'windows95';
+  cursor: pointer;
 }
 
 button:not(:disabled):hover,
@@ -107,6 +108,7 @@ button:disabled, .blue-btn:disabled{
   padding: 0 1rem;
   align-items: center;
   justify-content: space-between;
+  align-items: flex-end;
 }
 .main-body{
   margin: 1rem 0.5rem 0.5rem 0.5rem;
@@ -163,13 +165,10 @@ button:disabled, .blue-btn:disabled{
 
 
 .file-manager{
-  /* border: 2px solid #282c34; */
-  /* border-radius: 5px; */
-
-  /* border: 1px solid #373737;
-  box-shadow: 5px 5px 10px #C0C0C0;
-  padding-top: 10px;
-  box-shadow: inset -1px -1px #0a0a0a, inset 1px 1px #dfdfdf, inset -2px -2px grey, inset 2px 2px #fff; */
+  height: 0px;
+  min-height: 100%;
+  overflow-y: scroll;
+  box-sizing: border-box;
 }
 
 .drag-drop-zone {
@@ -305,6 +304,7 @@ button:disabled, .blue-btn:disabled{
   justify-content: left;
   margin: 1rem 2rem;
   gap: 3rem;
+  flex-wrap: wrap;
 }
 
 .each-folder{
@@ -321,7 +321,7 @@ button:disabled, .blue-btn:disabled{
 .footer{
   background: silver;
   display: grid;
-  grid-template-columns: 300px auto 120px 180px;
+  grid-template-columns: 200px auto 200px;
   align-items: center;
   margin:0;
 
@@ -513,4 +513,12 @@ button {
   height: 200vh;
   transform: translate(-50%, -40%);
   z-index: -3;
+}
+
+
+
+.button-menu {
+  display: flex;
+  gap: 14px;
+  flex-direction: row;
 }
