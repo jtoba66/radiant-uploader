@@ -34,7 +34,7 @@ export default function EachFile({ file, copyToClipboard, openFile }) {
 					alt='file icon'
 					src={IconCollection[fileType] || fallback}
 				/>
-				{truncate(file.name, 30)}
+				{truncate(file.name, window.innerWidth > 480 ? 30 : 10)}
 			</div>
 			<p
 				className='view-online windows-font'

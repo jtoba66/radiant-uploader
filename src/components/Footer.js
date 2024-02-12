@@ -41,7 +41,7 @@ export default function Footer({
 					<img alt='Jackal Logo' id='jkl_logo' src={jackal_logo} />
 					<p>Start</p>
 				</a>
-				<div>
+				<div className="footer_links">
 					<a
 						href='https://twitter.com/Jackal_Protocol'
 						target='blank'
