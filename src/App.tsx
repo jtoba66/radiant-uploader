@@ -618,7 +618,7 @@ function App() {
 							{selectedFiles.length === 0 && (
 								<>
 									{/* <UploadIcon className='upload-icon' /> */}
-									<img alt='upload icon' width={50} src={upload_icon} />
+									<img id="upload-icon" alt='upload icon' width={50} src={upload_icon} />
 									<p className='windows-font'>
 										Drag and drop your file(s) here
 									</p>
