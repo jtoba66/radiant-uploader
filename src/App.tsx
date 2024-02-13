@@ -85,6 +85,11 @@ function App() {
 		let jklAddress = trackWallet.getJackalAddress();
 		setJKLAddress(jklAddress);
 
+		if ((await trackWallet.getJackalBalance()).amount === "0") {
+			setError("Need Jackal Tokens. Please send tokens to this wallet and refresh the page.")
+			return
+		}
+
 		let trackIo = await FileIo.trackIo(trackWallet, ioVersion);
 		setFileIo(trackIo);
 
