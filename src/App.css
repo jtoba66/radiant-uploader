@@ -599,3 +599,75 @@ button {
     display: block;
   }
 }
+
+/* SERIOUS MODE */
+.serious-mode{
+  background-color: white;
+
+}
+
+.serious-mode * {
+font-family:Arial, Helvetica, sans-serif;
+}
+
+/* .serious-mode div{
+  background-color: white;
+} */
+.serious-mode button,
+.serious-mode  .button{
+  background-color: #ffffff;
+  border-radius: 10px;
+  border: 1px solid black;
+	cursor: pointer;
+  box-shadow: none;
+}
+
+.serious-mode button:hover,
+.serious-mode  .button:hover{
+  color: white;
+  outline: none;
+  background-color: black;
+  border: 1px solid white;
+  transition: 0.3s;
+}
+
+.serious-mode .blue-btn{
+  background-color:  #0090f8;
+}
+
+.serious-mode .title-bar{
+  background: linear-gradient(90deg, #242424, #1c1d1e);
+  border-radius: 10px;
+}
+
+/* No longer sick border */
+.serious-mode .sick-border{
+  box-shadow: none;
+  border: 2px solid #000000;
+  border-radius: 10px;
+}
+
+.serious-mode .each-file{
+  margin:0;
+padding: 5px 10px;
+}
+
+.serious-mode .each-file:hover{
+  background: #eff5f6;
+  color: black;
+ border-top: 1px solid black;
+ border-bottom: 1px solid black;
+}
+
+.serious-mode .view-online{
+  box-shadow: none;
+  background: #dadada;
+  padding: 10px 15px;
+  border-radius: 15px;
+}
+
+.serious-mode .view-online:hover{
+  color: white;
+  background: black;
+  transition: ease-in-out 0.1s;
+}
