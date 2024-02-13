@@ -39,6 +39,7 @@ const ioVersion = "1.1.2";
 // const path = "radiant"
 
 function App() {
+	const [serious, setSerious] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [uploading, setUploading] = useState<boolean>(false);
 	const [wallet, setWallet] = useState<IWalletHandler | null>(null);
@@ -411,6 +412,15 @@ function App() {
 		navigator.clipboard.writeText(link);
 	};
 
+	let toggleClicks = 0;
+	const toggleSeriousMode = () => {
+		toggleClicks++;
+		if (toggleClicks === 3) {
+			setSerious(!serious);
+			toggleClicks = 0;
+		}
+	};
+
 	useMemo(() => {
 		console.log("useMemo (wallet, fileIo)");
 		updateFileList();
@@ -438,7 +448,7 @@ function App() {
 	};
 
 	return (
-		<div className='App windows-font'>
+		<div className={"App windows-font " + (serious ? "serious-mode" : "")}>
 			{startup && (
 				<div className='startup-frame '>
 					<div className='title-bar'>
@@ -505,18 +515,17 @@ function App() {
 						public storage forever
 					</p>
 				</div>
-				<div className="button-menu">
-					
+				<div className='button-menu'>
 					{!walletActive ? (
-					<span onClick={connectButtonClick} className='button windows-font'>
-						Connect
-					</span>
-				) : (
-					<span className='button windows-font'>
-						{`${JKLAddress.slice(0, 6)}...${JKLAddress.slice(-4)}`}
-					</span>
-				)}
-				<a
+						<span onClick={connectButtonClick} className='button windows-font'>
+							Connect
+						</span>
+					) : (
+						<span className='button windows-font' onClick={toggleSeriousMode}>
+							{`${JKLAddress.slice(0, 6)}...${JKLAddress.slice(-4)}`}
+						</span>
+					)}
+					<a
 						className='button windows-font'
 						href='https://app.osmosis.zone/?to=JKL&from=USDC'
 						target='_blank'
@@ -524,8 +533,7 @@ function App() {
 					>
 						Buy JKL
 					</a>
-					
-					
+
 					{/* <button
 						className='blue-btn'
 						onClick={(e) => connectButtonClick(e)}
@@ -618,7 +626,12 @@ function App() {
 							{selectedFiles.length === 0 && (
 								<>
 									{/* <UploadIcon className='upload-icon' /> */}
-									<img id="upload-icon" alt='upload icon' width={50} src={upload_icon} />
+									<img
+										id='upload-icon'
+										alt='upload icon'
+										width={50}
+										src={upload_icon}
+									/>
 									<p className='windows-font'>
 										Drag and drop your file(s) here
 									</p>
@@ -729,7 +742,6 @@ function App() {
 									openFile={openFile}
 								/>
 							))}
-							
 					</div>
 				</div>
 			</div>
