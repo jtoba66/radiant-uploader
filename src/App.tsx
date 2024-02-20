@@ -13,6 +13,11 @@ import folder_icon from "./assets/folder_close.png";
 import folder_open from "./assets/folder_open.png";
 import john from "./assets/john-travolta.gif";
 
+// serious assets
+import serious_folder from "./assets/folder-icon.svg";
+import serious_upload from "./assets/upload-icon.svg";
+import loadingIcon from "./assets/loading.gif";
+
 import type {
 	IWalletConfig,
 	IWalletHandler,
@@ -60,6 +65,9 @@ function App() {
 	const [startup, setStartup] = useState(true);
 	const [error, setError] = useState<string>("");
 
+	let loading_icon = serious ? loadingIcon : loading_cat;
+	let uploading_icon = serious ? loadingIcon : loading_cat_smol;
+
 	useEffect(() => {
 		if (wallet) {
 			console.log(selectedFiles, "- Has changed");
@@ -86,8 +94,10 @@ function App() {
 		setJKLAddress(jklAddress);
 
 		if ((await trackWallet.getJackalBalance()).amount === "0") {
-			setError("Need Jackal Tokens. Please send tokens to this wallet and refresh the page.")
-			return
+			setError(
+				"Need Jackal Tokens. Please send tokens to this wallet and refresh the page.",
+			);
+			return;
 		}
 
 		let trackIo = await FileIo.trackIo(trackWallet, ioVersion);
@@ -601,7 +611,7 @@ function App() {
 					onDragLeave={(e) => handleDragLeave(e)}
 				>
 					{uploading ? (
-						<img alt='uploading...' src={loading_cat_smol} />
+						<img width={100} alt='uploading...' src={uploading_icon} />
 					) : (
 						<>
 							{selectedFiles.length > 0 && (
@@ -631,12 +641,21 @@ function App() {
 							{selectedFiles.length === 0 && (
 								<>
 									{/* <UploadIcon className='upload-icon' /> */}
-									<img
-										id='upload-icon'
-										alt='upload icon'
-										width={50}
-										src={upload_icon}
-									/>
+									{serious ? (
+										<img
+											id='upload-icon'
+											alt='upload icon'
+											width={50}
+											src={serious_upload}
+										/>
+									) : (
+										<img
+											id='upload-icon'
+											alt='upload icon'
+											width={50}
+											src={upload_icon}
+										/>
+									)}
 									<p className='windows-font'>
 										Drag and drop your file(s) here
 									</p>
@@ -706,16 +725,26 @@ function App() {
 								{folders &&
 									folders.map((e, i) => (
 										<div key={i} className='each-folder'>
-											<img
-												alt='folder'
-												src={folder_icon}
-												width={50}
-												onMouseOver={(e) => (e.currentTarget.src = folder_open)}
-												onMouseLeave={(e) =>
-													(e.currentTarget.src = folder_icon)
-												}
-												onClick={() => loadFolder(e)}
-											/>
+											{serious ? (
+												<img
+													alt='folder'
+													src={serious_folder}
+													onClick={() => loadFolder(e)}
+												/>
+											) : (
+												<img
+													alt='folder'
+													src={folder_icon}
+													width={50}
+													onMouseOver={(e) =>
+														(e.currentTarget.src = folder_open)
+													}
+													onMouseLeave={(e) =>
+														(e.currentTarget.src = folder_icon)
+													}
+													onClick={() => loadFolder(e)}
+												/>
+											)}
 											<div className='folder-name'>{e}</div>
 										</div>
 									))}
@@ -723,7 +752,11 @@ function App() {
 						)}
 						{wallet && loading && (
 							<div className='loading_cat'>
-								<img alt='cat is loading pls wait' src={loading_cat} />
+								<img
+									alt='cat is loading pls wait'
+									src={loading_icon}
+									width={200}
+								/>
 								<p>Pls hold...</p>
 							</div>
 						)}
