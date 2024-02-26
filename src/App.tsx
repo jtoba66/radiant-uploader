@@ -14,7 +14,7 @@ import folder_open from "./assets/folder_open.png";
 import john from "./assets/john-travolta.gif";
 
 // serious assets
-import serious_folder from "./assets/folder-icon.svg";
+import serious_folder from "./assets/serious-icons/folder.png";
 import serious_upload from "./assets/upload-icon.svg";
 import loadingIcon from "./assets/loading.gif";
 
@@ -729,6 +729,7 @@ function App() {
 												<img
 													alt='folder'
 													src={serious_folder}
+													width={40}
 													onClick={() => loadFolder(e)}
 												/>
 											) : (
@@ -774,6 +775,7 @@ function App() {
 						{!loading &&
 							data.map((e, i) => (
 								<EachFile
+									serious={serious}
 									key={i}
 									file={e}
 									copyToClipboard={copyToClipboard}
