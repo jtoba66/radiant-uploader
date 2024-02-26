@@ -1,13 +1,14 @@
-import React from "react"
+import React from "react";
 
-import Clock from "./Clock"
-import jackal_logo from "../assets/Jackal_icon.png"
+import Clock from "./Clock";
+import jackal_logo from "../assets/Jackal_icon.png";
 
 export default function Footer({
 	JKLBalance,
 	JKLAddress,
 	connectButtonClick,
-	walletActive
+	walletActive,
+	serious,
 }) {
 	return (
 		<>
@@ -23,25 +24,27 @@ export default function Footer({
 				</a>
 			</p>
 			<div className='footer windows-font'>
-				<a
-					className='footer-btn'
-					href='https://www.youtube.com/watch?v=dQw4w9WgXcQ'
-					target='_blank'
-					style={{
-						display: "flex",
-						margin: "5px",
-						marginLeft: "10px",
-						padding: "2px",
-						height: "35px",
-						width: "min-content",
-						cursor: "pointer"
-					}}
-					rel='noreferrer'
-				>
-					<img alt='Jackal Logo' id='jkl_logo' src={jackal_logo} />
-					<p>Start</p>
-				</a>
-				<div className="footer_links">
+				{serious || (
+					<a
+						className='footer-btn'
+						href='https://www.youtube.com/watch?v=dQw4w9WgXcQ'
+						target='_blank'
+						style={{
+							display: "flex",
+							margin: "5px",
+							marginLeft: "10px",
+							padding: "2px",
+							height: "35px",
+							width: "min-content",
+							cursor: "pointer",
+						}}
+						rel='noreferrer'
+					>
+						<img alt='Jackal Logo' id='jkl_logo' src={jackal_logo} />
+						<p>Start</p>
+					</a>
+				)}
+				<div className='footer_links'>
 					<a
 						href='https://twitter.com/Jackal_Protocol'
 						target='blank'
@@ -71,10 +74,10 @@ export default function Footer({
 						Github
 					</a>
 				</div>
-				
-				<Clock JKLBalance={JKLBalance} />
+
+				{serious || <Clock JKLBalance={JKLBalance} />}
 				{/* <div className='taskbar-divider'></div> */}
 			</div>
 		</>
-	)
+	);
 }

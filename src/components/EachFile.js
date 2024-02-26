@@ -10,6 +10,7 @@ import text from "../assets/file-icons/text.png";
 import mp3 from "../assets/file-icons/mp3.png";
 import mp4 from "../assets/file-icons/mp4.png";
 
+import serious_copy from "../assets/serious-icons/copy_icon.png";
 import serious_fallback from "../assets/serious-icons/fallback.png";
 import serious_jpg from "../assets/serious-icons/jpg.png";
 import serious_pdf from "../assets/serious-icons/pdf.png";
@@ -19,7 +20,7 @@ import serious_mp3 from "../assets/serious-icons/mp3.png";
 import serious_mp4 from "../assets/serious-icons/mp4.png";
 import serious_txt from "../assets/serious-icons/txt.png";
 
-let IconCollection = {
+const IconCollection = {
 	png,
 	pdf,
 	jpeg,
@@ -46,7 +47,7 @@ const SeriousCollection = {
 export default function EachFile({ file, copyToClipboard, openFile, serious }) {
 	const [showAlert, setShowAlert] = React.useState(false);
 
-	IconCollection = serious ? SeriousCollection : IconCollection;
+	let SelectedCollection = serious ? SeriousCollection : IconCollection;
 
 	let fileType = file.name.split(".")[1];
 
@@ -54,9 +55,9 @@ export default function EachFile({ file, copyToClipboard, openFile, serious }) {
 		<div className='each-file'>
 			<div className='file-name'>
 				<img
-					height={50}
+					height={serious ? 35 : 50}
 					alt='file icon'
-					src={IconCollection[fileType] || fallback}
+					src={SelectedCollection[fileType] || fallback}
 				/>
 				{truncate(file.name, window.innerWidth > 480 ? 30 : 10)}
 			</div>
@@ -70,7 +71,8 @@ export default function EachFile({ file, copyToClipboard, openFile, serious }) {
 				{showAlert && <p className='copied-alert'>Link copied</p>}
 				<img
 					alt='copy'
-					src={copy_icon}
+					src={serious ? serious_copy : copy_icon}
+					width={25}
 					className='copy-icon'
 					onClick={() => {
 						copyToClipboard(file.name);

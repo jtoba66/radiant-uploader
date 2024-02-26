@@ -787,6 +787,7 @@ function App() {
 			</div>
 
 			<Footer
+				serious={serious}
 				walletActive={walletActive}
 				connectButtonClick={connectButtonClick}
 				JKLBalance={JKLBalance}
