@@ -542,7 +542,7 @@ function App() {
 					)}
 					<a
 						className='button windows-font'
-						href='https://app.osmosis.zone/?to=JKL&from=USDC'
+						href='https://astrovault.io/trade/?from=USDC.nobl&to=JKL'
 						target='_blank'
 						rel='noreferrer'
 					>
