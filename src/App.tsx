@@ -280,7 +280,7 @@ function App() {
 				?.staggeredUploadFiles(uploadList, currentDir, {
 					complete: 0,
 					timer: 0,
-				})
+				}, true)
 				.catch((err) => {
 					console.log(err);
 					console.log("upload failed");
