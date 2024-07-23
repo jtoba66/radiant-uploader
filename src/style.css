@@ -1,0 +1,69 @@
+/* Normalize
+----------------------------------------------- */
+body {
+  margin: 0;
+  height: 100vh;
+  width: 100vw;
+}
+
+h1 {
+  font-size: 2em;
+  margin: 0.67em 0;
+}
+
+p {
+  margin: 1em 0;
+}
+
+b, strong {
+  font-weight: bold;
+}
+/* Fonts
+----------------------------------------------- */
+@font-face {
+  font-family: KHTeka;
+  src: url("font/fonts/KHTeka-Regular.otf") format("opentype");
+}
+
+@font-face {
+  font-family: KHTeka;
+  font-weight: bold;
+  src: url("font/fonts/KHTeka-Bold.otf") format("opentype");
+}
+/* Custom css
+----------------------------------------------- */
+:root {
+  --clr-warm-black: #1B1C16;
+  --clr-yellow: #E9F451;
+}
+
+body {
+  background-color: var(--clr-yellow);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.alignment {
+  width: 100vw;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.content {
+  width: 50vw;
+  text-align: center;
+  color: var(--clr-warm-black);
+  font-family: 'KHTeka', sans-serif;
+}
+
+.caution {
+  width: 100vw;
+  height: 180px;
+  background-image: repeating-linear-gradient(
+    -40deg,
+    transparent 0 60px,
+    var(--clr-warm-black) 60px 120px
+  );
+}
