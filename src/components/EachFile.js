@@ -21,68 +21,84 @@ import serious_mp4 from "../assets/serious-icons/mp4.png";
 import serious_txt from "../assets/serious-icons/txt.png";
 
 const IconCollection = {
-	png,
-	pdf,
-	jpeg,
-	jpg: jpeg,
-	docx: text,
-	txt: text,
-	mp4,
-	mp3,
-	fallback,
+  png,
+  pdf,
+  jpeg,
+  jpg: jpeg,
+  docx: text,
+  txt: text,
+  mp4,
+  mp3,
+  fallback,
 };
 
 const SeriousCollection = {
-	png: serious_png,
-	pdf: serious_pdf,
-	jpeg: serious_jpg,
-	jpg: serious_jpg,
-	docx: serious_doc,
-	txt: serious_txt,
-	mp4: serious_mp4,
-	mp3: serious_mp3,
-	fallback: serious_fallback,
+  png: serious_png,
+  pdf: serious_pdf,
+  jpeg: serious_jpg,
+  jpg: serious_jpg,
+  docx: serious_doc,
+  txt: serious_txt,
+  mp4: serious_mp4,
+  mp3: serious_mp3,
+  fallback: serious_fallback,
 };
 
 export default function EachFile({ file, copyToClipboard, openFile, serious }) {
-	const [showAlert, setShowAlert] = React.useState(false);
+  const [showAlert, setShowAlert] = React.useState(false);
+  const [alertKey, setAlertKey] = React.useState(0);
 
-	let SelectedCollection = serious ? SeriousCollection : IconCollection;
+  const SelectedCollection = serious ? SeriousCollection : IconCollection;
 
-	let fileType = file.name.split(".")[1];
+  // Safely determine file extension
+  const fileType = file.name.includes(".")
+    ? file.name.split(".").pop().toLowerCase()
+    : "fallback";
 
-	return (
-		<div className='each-file'>
-			<div className='file-name'>
-				<img
-					height={serious ? 35 : 50}
-					alt='file icon'
-					src={SelectedCollection[fileType] || fallback}
-				/>
-				{truncate(file.name, window.innerWidth > 480 ? 30 : 10)}
-			</div>
-			<p
-				className='view-online windows-font'
-				onClick={() => openFile(file.name)}
-			>
-				View online
-			</p>
-			<div className='copy-link'>
-				{showAlert && <p className='copied-alert'>Link copied</p>}
-				<img
-					alt='copy'
-					src={serious ? serious_copy : copy_icon}
-					width={25}
-					className='copy-icon'
-					onClick={() => {
-						copyToClipboard(file.name);
-						setShowAlert(true);
-						setTimeout(() => {
-							setShowAlert(false);
-						}, 1000);
-					}}
-				/>
-			</div>
-		</div>
-	);
+  // Prevent SSR window errors
+  const screenWidth =
+    typeof window !== "undefined" ? window.innerWidth : 1024;
+
+  return (
+    <div className="each-file">
+      <div className="file-name">
+        <img
+          height={serious ? 35 : 50}
+          alt="file icon"
+          src={SelectedCollection[fileType] || SelectedCollection.fallback}
+        />
+        {truncate(file.name, screenWidth > 480 ? 30 : 10)}
+      </div>
+
+      <p
+        className="view-online windows-font"
+        onClick={() => openFile(file.name)}
+        role="button"
+        tabIndex={0}
+        onKeyPress={(e) => e.key === "Enter" && openFile(file.name)}
+      >
+        View online
+      </p>
+
+      <div className="copy-link">
+        {showAlert && (
+          <p key={alertKey} className="copied-alert">
+            Link copied
+          </p>
+        )}
+        <img
+          alt="copy"
+          src={serious ? serious_copy : copy_icon}
+          width={25}
+          className="copy-icon"
+          onClick={() => {
+            copyToClipboard(file.name);
+            setShowAlert(true);
+            setAlertKey((k) => k + 1);
+            setTimeout(() => setShowAlert(false), 1000);
+          }}
+        />
+      </div>
+    </div>
+  );
 }

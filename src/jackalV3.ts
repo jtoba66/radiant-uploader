@@ -1,87 +1,181 @@
 // src/jackalV3.ts
-import { ClientHandler, type IClientHandler, type IStorageHandler } from '@jackallabs/jackal.js';
+import {
+  ClientHandler,
+  type IClientHandler,
+  type IStorageHandler,
+} from "@jackallabs/jackal.js";
+import { mainnet } from "./config/mainnet";
 
-// Keep singletons so the app can reuse connections
 let client: IClientHandler | null = null;
 let storage: IStorageHandler | null = null;
 
 /**
- * Connect the wallet (Keplr/Leap) and bootstrap storage.
- * Call this once (e.g., after user clicks "Connect").
+ * Establish a Jackal mainnet connection.
+ * Uses official Keplr API (enable + getKey) and Keplr registry chainConfig.
  */
-export async function connectJackal(opts: {
-  // Jackal chain (RPC & chain-id)
-  chainId: string;
-  endpoint: string;
-  // Host chain (used internally by SDK)
-  host: { chainId: string; endpoint: string; chainConfig: any };
-  // 'keplr' or 'leap'
-  selectedWallet?: 'keplr' | 'leap';
-}) {
-  client = await ClientHandler.connect({
-    selectedWallet: opts.selectedWallet ?? 'keplr',
-    chainId: opts.chainId,
-    endpoint: opts.endpoint,
-    host: {
-      chainConfig: opts.host.chainConfig,
-      chainId: opts.host.chainId,
-      endpoint: opts.host.endpoint
-    }
-  });
-  storage = await client.createStorageHandler();
-  await storage.initStorage();
-  return {
-    address: await client.getJackalAddress(),
-    balance: await client.getJklBalance()
+export async function connectJackal(
+  opts: { selectedWallet?: "keplr" | "leap" } = {}
+): Promise<{ address: string; balance: number }> {
+  if (typeof window === "undefined") {
+    throw new Error("Wallets unavailable in server-side context");
+  }
+
+  const anyWindow = window as unknown as {
+    keplr?: any;
+    leap?: any;
+    getOfflineSigner?: (chainId: string) => any;
   };
+
+  const walletProvider =
+    opts.selectedWallet === "leap" && anyWindow.leap
+      ? anyWindow.leap
+      : anyWindow.keplr;
+
+  if (!walletProvider) {
+    throw new Error("No supported wallet found. Please install Keplr or Leap.");
+  }
+
+  const { chainId, rpcEndpoint, host } = mainnet;
+
+  try {
+    console.log("🔗 Requesting wallet connection...");
+
+    // ✅ Suggest chain only if needed (clean config)
+    if (walletProvider.experimentalSuggestChain) {
+      try {
+        await walletProvider.experimentalSuggestChain({
+          ...host.chainConfig,
+          chainId,
+          rpc: rpcEndpoint,
+          rest:
+            host.chainConfig.rest ??
+            "https://lcd-jackal.keplr.app",
+          stakeCurrency: host.chainConfig.stakeCurrency,
+          feeCurrencies: host.chainConfig.feeCurrencies,
+          features: host.chainConfig.features ?? ["cosmwasm"],
+        });
+      } catch {
+        console.info("Chain already registered, skipping suggestChain");
+      }
+    }
+
+    // ✅ Unlock / request permission
+    await walletProvider.enable(chainId);
+
+    // ✅ Retrieve key info (modern Keplr API)
+    const key = await walletProvider.getKey(chainId);
+    const address = key.bech32Address;
+    console.log("👛 Wallet address:", address);
+
+    // ✅ Create signer after unlock confirmed
+    const offlineSigner =
+      walletProvider.getOfflineSigner?.(chainId) ??
+      anyWindow.getOfflineSigner?.(chainId);
+
+    if (!offlineSigner) {
+      throw new Error("Unable to get offline signer from wallet.");
+    }
+
+    // ✅ Connect to Jackal.js client
+    console.log("🌐 Connecting to Jackal mainnet...");
+    client = await ClientHandler.connect({
+      selectedWallet: opts.selectedWallet ?? "keplr",
+      chainId,
+      endpoint: rpcEndpoint,
+      host,
+    });
+
+    // ✅ Initialize StorageHandler
+    storage = await client.createStorageHandler();
+    if (storage.initStorage) {
+      await storage.initStorage();
+    }
+
+    const balance = (await client.getJklBalance()) / 1_000_000;
+    console.log(`✅ Connected: ${address}, Balance: ${balance} JKL`);
+
+    return { address, balance };
+  } catch (err: any) {
+    console.error("❌ Wallet connection failed:", err.message || err);
+    throw err;
+  }
 }
 
-/** Read a folder and return simple lists you can render. */
+/** Retrieve normalized JKL balance (uJKL → JKL). */
+export async function getBalance() {
+  if (!client) throw new Error("Jackal not connected");
+  const balance = await client.getJklBalance();
+  return balance / 1_000_000;
+}
+
+/** List contents of a directory path. */
 export async function listFolder(path: string) {
-  if (!storage) throw new Error('Not connected');
-  await storage.loadDirectory({ path }); // populates internal buffers
+  if (!storage) throw new Error("Jackal not connected");
+  await storage.loadDirectory({ path });
   return {
     folders: storage.listChildFolders(),
-    files: storage.listChildFiles()
+    files: storage.listChildFiles(),
   };
 }
 
-/** Create one or more folders under a path. */
-export async function createFolders(relativePath: string, names: string[]) {
-  if (!storage) throw new Error('Not connected');
-  return storage.createFolders({ names, relativePath });
+/** Create one or more folders (v3.7.2 final signature). */
+export async function createFolders(_path: string, names: string[]) {
+  if (!storage) throw new Error("Jackal not connected");
+  return storage.createFolders({ names }); // ✅ only "names" allowed
 }
 
-/** Estimate JKL cost for gb/days and (optionally) purchase. */
+/** Estimate cost (GB × days) — auto-normalized to JKL. */
 export async function estimateStorage(gb: number, days: number) {
-  if (!storage) throw new Error('Not connected');
-  return storage.estimateStoragePlan({ gb, days });
+  if (!storage) throw new Error("Jackal not connected");
+  const cost = await storage.estimateStoragePlan({ gb, days });
+  return typeof cost === "number" ? cost / 1_000_000 : cost;
 }
+
+/** Purchase storage plan (optional pre-purchase; not required for uploads). */
 export async function buyStorage(gb: number, days: number) {
-  if (!storage) throw new Error('Not connected');
-  return storage.purchaseStoragePlan({ gb, days });
+  if (!storage) throw new Error("Jackal not connected");
+  const tx = await storage.purchaseStoragePlan({ gb, days });
+  return tx;
 }
 
-/** Upload: queue files (public or private) then process queues. */
-export async function uploadFiles(files: File[], isPrivate = false, durationDays = 0) {
-  if (!storage) throw new Error('Not connected');
-  if (isPrivate) {
-    await storage.queuePrivate(files, durationDays);
-  } else {
-    await storage.queuePublic(files, durationDays);
+/** Upload public or private files (auto-pay from wallet). */
+export async function uploadFiles(
+  files: File[],
+  isPrivate = false,
+  durationDays = 0
+) {
+  if (!storage) throw new Error("Jackal not connected");
+  if (files.length === 0) throw new Error("No files selected");
+
+  try {
+    if (isPrivate) {
+      await storage.queuePrivate(files, durationDays);
+    } else {
+      await storage.queuePublic(files, durationDays);
+    }
+    await storage.processAllQueues(); // ✅ v3.7.2 correct method
+  } catch (err) {
+    console.error("Upload error:", err);
+    throw err;
   }
-  await storage.processAllQueues();
 }
 
-/** Quick helpers */
+/** Retrieve available providers (nodes offering storage). */
 export async function getProviders() {
-  if (!storage) throw new Error('Not connected');
-  return storage.getAvailableProviders();
+  if (!storage) throw new Error("Jackal not connected");
+  if (storage.getAvailableProviders) {
+    return storage.getAvailableProviders();
+  }
+  return [];
 }
+
+/** Return connected Jackal address. */
+export async function jackalAddress() {
+  if (!client) throw new Error("Jackal not connected");
+  return client.getJackalAddress();
+}
+
+/** Quick readiness check. */
 export function isReady() {
   return Boolean(client && storage);
-}
-export async function jackalAddress() {
-  if (!client) throw new Error('Not connected');
-  return client.getJackalAddress();
 }

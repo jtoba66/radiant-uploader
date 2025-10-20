@@ -1,2 +1,2 @@
-export * from "./testnet"
-export * from "./mainnet"
+// src/config/index.ts
+export * from "./mainnet";
