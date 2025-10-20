@@ -9,14 +9,14 @@ export const mainnet = {
   queryAddr: "/lcd",
   restEndpoint: "/lcd",
 
-  // ✅ RPC endpoints (proxy for HTTP, full URL for WebSocket)
+  // ✅ RPC endpoints
   txAddr: "/v1",
-  rpcEndpoint: "wss://rpc-jackal.keplr.app/websocket",
+  rpcEndpoint: "wss://rpc-jackal.keplr.app", // <-- removed /websocket
 
   chainConfig: {
     chainId: signerChain,
     chainName: "Jackal",
-    rpc: "/v1", // proxied through Netlify (bypasses CORS)
+    rpc: "/v1",
     rest: "/lcd",
     walletUrlForStaking: "https://wallet.keplr.app/chains/jackal",
     bip44: { coinType: 118 },
@@ -62,8 +62,7 @@ export const mainnet = {
 
   host: {
     chainId: signerChain,
-    // ✅ WebSocket endpoint for Jackal.js internals
-    endpoint: "wss://rpc-jackal.keplr.app/websocket",
+    endpoint: "wss://rpc-jackal.keplr.app", // <-- no /websocket
     chainConfig: {
       chainId: signerChain,
       chainName: "Jackal",
