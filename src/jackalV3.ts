@@ -3,6 +3,7 @@ import {
   ClientHandler,
   type IClientHandler,
   type IStorageHandler,
+  type IClientSetup,
 } from "@jackallabs/jackal.js";
 import { mainnet } from "./config/mainnet";
 
@@ -35,77 +36,83 @@ export async function connectJackal(
     throw new Error("No supported wallet found. Please install Keplr or Leap.");
   }
 
-  const { chainId, rpcEndpoint, host } = mainnet;
+  const { chainId, chainConfig, txAddr } = mainnet;
 
   try {
     console.log("🔗 Requesting wallet connection...");
 
-    // ✅ Suggest chain only if needed (clean config)
+    // ✅ Suggest chain first (if needed)
     if (walletProvider.experimentalSuggestChain) {
       try {
-        await walletProvider.experimentalSuggestChain({
-          ...host.chainConfig,
-          chainId,
-          rpc: rpcEndpoint,
-          rest:
-            host.chainConfig.rest ??
-            "https://lcd-jackal.keplr.app",
-          stakeCurrency: host.chainConfig.stakeCurrency,
-          feeCurrencies: host.chainConfig.feeCurrencies,
-          features: host.chainConfig.features ?? ["cosmwasm"],
-        });
-      } catch {
-        console.info("Chain already registered, skipping suggestChain");
+        await walletProvider.experimentalSuggestChain(chainConfig);
+        console.log("✅ Chain suggested successfully");
+      } catch (err) {
+        console.info("Chain already registered:", err);
       }
     }
 
-    // ✅ Unlock / request permission
-    await walletProvider.enable(chainId);
+    // ✅ CRITICAL FIX: enable() expects an ARRAY of chain IDs!
+    console.log("🔓 Enabling wallet for chain:", chainId);
+    await walletProvider.enable([chainId]);
+    console.log("✅ Wallet enabled");
 
-    // ✅ Retrieve key info (modern Keplr API)
+    // ✅ Get the key - Keplr should now be unlocked
+    console.log("🔑 Getting wallet key...");
     const key = await walletProvider.getKey(chainId);
+    
+    if (!key || !key.bech32Address) {
+      throw new Error("Failed to retrieve wallet address from Keplr");
+    }
+    
     const address = key.bech32Address;
     console.log("👛 Wallet address:", address);
 
-    // ✅ Create signer after unlock confirmed
-    const offlineSigner =
-      walletProvider.getOfflineSigner?.(chainId) ??
-      anyWindow.getOfflineSigner?.(chainId);
-
-    if (!offlineSigner) {
-      throw new Error("Unable to get offline signer from wallet.");
-    }
-
-    // ✅ Connect to Jackal.js client
-    console.log("🌐 Connecting to Jackal mainnet...");
-    client = await ClientHandler.connect({
+    // ✅ Create the proper IClientSetup object for ClientHandler.connect
+    const setup: IClientSetup = {
       selectedWallet: opts.selectedWallet ?? "keplr",
       chainId,
-      endpoint: rpcEndpoint,
-      host,
-    });
+      endpoint: txAddr,
+      chainConfig,
+    };
+
+    // ✅ Connect to Jackal.js client using proper API
+    console.log("🌐 Connecting to Jackal mainnet...");
+    client = await ClientHandler.connect(setup);
 
     // ✅ Initialize StorageHandler
+    console.log("💾 Initializing storage handler...");
     storage = await client.createStorageHandler();
-    if (storage.initStorage) {
-      await storage.initStorage();
+    
+    // Load provider pool if available
+    if (storage.loadProviderPool) {
+      await storage.loadProviderPool();
     }
 
-    const balance = (await client.getJklBalance()) / 1_000_000;
+    const balanceCoin = await client.getJklBalance();
+    const balance = Number(balanceCoin.amount) / 1_000_000;
     console.log(`✅ Connected: ${address}, Balance: ${balance} JKL`);
 
     return { address, balance };
   } catch (err: any) {
-    console.error("❌ Wallet connection failed:", err.message || err);
-    throw err;
+    console.error("❌ Wallet connection failed:", err);
+    
+    // Provide more helpful error messages
+    if (err.message?.includes("rejected") || err.message?.includes("Request rejected")) {
+      throw new Error("Wallet connection was rejected. Please try again and approve the connection.");
+    }
+    if (err.message?.includes("locked")) {
+      throw new Error("Wallet is locked. Please unlock your wallet and try again.");
+    }
+    
+    throw new Error(err.message || "Failed to connect to wallet");
   }
 }
 
 /** Retrieve normalized JKL balance (uJKL → JKL). */
 export async function getBalance() {
   if (!client) throw new Error("Jackal not connected");
-  const balance = await client.getJklBalance();
-  return balance / 1_000_000;
+  const balanceCoin = await client.getJklBalance();
+  return Number(balanceCoin.amount) / 1_000_000;
 }
 
 /** List contents of a directory path. */
@@ -121,7 +128,7 @@ export async function listFolder(path: string) {
 /** Create one or more folders (v3.7.2 final signature). */
 export async function createFolders(_path: string, names: string[]) {
   if (!storage) throw new Error("Jackal not connected");
-  return storage.createFolders({ names }); // ✅ only "names" allowed
+  return storage.createFolders({ names });
 }
 
 /** Estimate cost (GB × days) — auto-normalized to JKL. */
@@ -153,7 +160,7 @@ export async function uploadFiles(
     } else {
       await storage.queuePublic(files, durationDays);
     }
-    await storage.processAllQueues(); // ✅ v3.7.2 correct method
+    await storage.processAllQueues();
   } catch (err) {
     console.error("Upload error:", err);
     throw err;
