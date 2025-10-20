@@ -109,7 +109,7 @@ function App() {
   const refresh = async (dir: string) => {
     setLoading(true);
     try {
-      const { folders, files, fileMetas } = await listFolder(dir);
+      const { folders, fileMetas } = await listFolder(dir);
       setFolders(folders || []);
       // Use file metadata to get ULIDs
       setData((fileMetas || []).map((meta: any) => ({ 
