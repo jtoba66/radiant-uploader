@@ -19,6 +19,13 @@ async function ensureStorageInitialized() {
   
   if (!storageInitialized) {
     try {
+      // Upgrade to full signer (enables encryption keypair)
+      if (storage.upgradeSigner) {
+        await storage.upgradeSigner();
+        console.log("🔑 Full signer enabled");
+      }
+      
+      // Initialize storage
       if (storage.initStorage) {
         await storage.initStorage();
         storageInitialized = true;
