@@ -1,8 +1,16 @@
 export default {
   server: {
     proxy: {
-      "/v1": "https://rpc-jackal.keplr.app",
-      "/lcd": "https://lcd-jackal.keplr.app",
+      "/v1": {
+        target: "https://rpc-jackal.keplr.app",
+        changeOrigin: true,
+        secure: true,
+      },
+      "/lcd": {
+        target: "https://lcd-jackal.keplr.app",
+        changeOrigin: true,
+        secure: true,
+      },
     },
   },
 };
