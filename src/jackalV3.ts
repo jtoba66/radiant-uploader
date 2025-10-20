@@ -170,6 +170,7 @@ export async function listFolder(path: string) {
   return {
     folders: storage.listChildFolders(),
     files: storage.listChildFiles(),
+    fileMetas: storage.listChildFileMetas(), // Add this to get ULIDs
   };
 }
 

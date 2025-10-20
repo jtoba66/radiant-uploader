@@ -30,7 +30,7 @@ import {
 
 import { truncate } from "./utils";
 
-type FileData = { name: string; fid: string };
+type FileData = { name: string; fid: string; ulid: string };
 
 function App() {
   const [serious, setSerious] = useState(false);
@@ -109,9 +109,14 @@ function App() {
   const refresh = async (dir: string) => {
     setLoading(true);
     try {
-      const { folders, files } = await listFolder(dir);
+      const { folders, files, fileMetas } = await listFolder(dir);
       setFolders(folders || []);
-      setData((files || []).map((f: string) => ({ name: f, fid: f })));
+      // Use file metadata to get ULIDs
+      setData((fileMetas || []).map((meta: any) => ({ 
+        name: meta.fileMeta.name, 
+        fid: meta.fileMeta.name,
+        ulid: meta.ulid 
+      })));
       setPath(dir);
       setNavigation(dir.split("/").filter(Boolean));
     } catch {
@@ -161,13 +166,13 @@ function App() {
     handleUpload(selectedFiles);
   };
 
-  const copyToClipboard = (fileName: string) => {
-    const link = `https://jackal.link/p/${JKLAddress}/${path}/${fileName}`;
+  const copyToClipboard = (fileName: string, ulid: string) => {
+    const link = `https://jackal.link/u/${ulid}`;
     navigator.clipboard.writeText(link);
   };
 
-  const openFile = (fileName: string) => {
-    const link = `https://jackal.link/p/${JKLAddress}/${path}/${fileName}`;
+  const openFile = (fileName: string, ulid: string) => {
+    const link = `https://jackal.link/u/${ulid}`;
     const w = window.open(link, "_blank");
     if (w) w.focus();
   };
@@ -467,8 +472,8 @@ function App() {
                   serious={serious}
                   key={i}
                   file={e}
-                  copyToClipboard={copyToClipboard}
-                  openFile={openFile}
+                  copyToClipboard={() => copyToClipboard(e.name, e.ulid)}
+                  openFile={() => openFile(e.name, e.ulid)}
                 />
               ))}
           </div>
