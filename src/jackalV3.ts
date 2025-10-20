@@ -9,6 +9,33 @@ import { mainnet } from "./config/mainnet";
 
 let client: IClientHandler | null = null;
 let storage: IStorageHandler | null = null;
+let storageInitialized: boolean = false;
+
+/**
+ * Initialize storage handler if not already initialized
+ */
+async function ensureStorageInitialized() {
+  if (!storage) throw new Error("Jackal not connected");
+  
+  if (!storageInitialized) {
+    try {
+      if (storage.initStorage) {
+        await storage.initStorage();
+        storageInitialized = true;
+        console.log("🔓 Storage handler initialized");
+      }
+    } catch (err: any) {
+      // If error is about already being initialized, that's fine
+      if (err.message?.includes("already") || err.message?.includes("initialized")) {
+        storageInitialized = true;
+        console.log("✅ Storage already initialized");
+      } else {
+        console.warn("Storage initialization warning:", err.message);
+        // Continue anyway - some operations might work
+      }
+    }
+  }
+}
 
 /**
  * Establish a Jackal mainnet connection.
@@ -86,6 +113,7 @@ export async function connectJackal(
     // Load provider pool if available
     if (storage.loadProviderPool) {
       await storage.loadProviderPool();
+      console.log("📡 Provider pool loaded");
     }
 
     const balanceCoin = await client.getJklBalance();
@@ -118,6 +146,7 @@ export async function getBalance() {
 /** List contents of a directory path. */
 export async function listFolder(path: string) {
   if (!storage) throw new Error("Jackal not connected");
+  await ensureStorageInitialized();
   await storage.loadDirectory({ path });
   return {
     folders: storage.listChildFolders(),
@@ -128,6 +157,7 @@ export async function listFolder(path: string) {
 /** Create one or more folders (v3.7.2 final signature). */
 export async function createFolders(_path: string, names: string[]) {
   if (!storage) throw new Error("Jackal not connected");
+  await ensureStorageInitialized();
   return storage.createFolders({ names });
 }
 
@@ -155,6 +185,8 @@ export async function uploadFiles(
   if (files.length === 0) throw new Error("No files selected");
 
   try {
+    await ensureStorageInitialized();
+    
     if (isPrivate) {
       await storage.queuePrivate(files, durationDays);
     } else {

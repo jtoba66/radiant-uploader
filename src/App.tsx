@@ -30,8 +30,6 @@ import {
 
 import { truncate } from "./utils";
 
-
-
 type FileData = { name: string; fid: string };
 
 function App() {
@@ -85,7 +83,6 @@ function App() {
   const initWallet = async () => {
     setLoading(true);
     try {
-      // ✅ Only pass selectedWallet now
       const { address, balance } = await connectJackal({ selectedWallet: "keplr" });
       setJKLAddress(address);
       setJKLBalance(balance);
@@ -108,11 +105,11 @@ function App() {
     }
   };
 
-  // Load folder contents
+  // Load folder contents (FIXED: removed "s/" prefix)
   const refresh = async (dir: string) => {
     setLoading(true);
     try {
-      const { folders, files } = await listFolder(`s/${dir}`);
+      const { folders, files } = await listFolder(dir);
       setFolders(folders || []);
       setData((files || []).map((f: string) => ({ name: f, fid: f })));
       setPath(dir);
@@ -192,9 +189,10 @@ function App() {
     }
   };
 
+  // FIXED: removed "s/" prefix from createFolders path
   const createMultiFolders = async (names: string[]) => {
     try {
-      await createFolders("s/" + path, names);
+      await createFolders(path, names);
       await refresh(path);
     } catch {
       setError("Failed to create folder(s).");
