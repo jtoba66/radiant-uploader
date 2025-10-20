@@ -10,14 +10,14 @@ export const mainnet = {
   queryAddr: "https://jackal-api.polkachu.com",
   restEndpoint: "https://jackal-api.polkachu.com",
 
-  // ✅ Keplr RPC (WebSocket-capable — no trailing /websocket)
-  txAddr: "https://rpc-jackal.keplr.app",
-  rpcEndpoint: "wss://rpc-jackal.keplr.app",
+  // ✅ Jackal official RPC (browser-compatible)
+  txAddr: "https://rpc.jackalprotocol.com",
+  rpcEndpoint: "https://rpc.jackalprotocol.com",
 
   chainConfig: {
     chainId: signerChain,
     chainName: "Jackal",
-    rpc: "https://rpc-jackal.keplr.app",
+    rpc: "https://rpc.jackalprotocol.com",
     rest: "https://jackal-api.polkachu.com",
     walletUrlForStaking: "https://wallet.keplr.app/chains/jackal",
     bip44: { coinType: 118 },
@@ -55,12 +55,12 @@ export const mainnet = {
 
   host: {
     chainId: signerChain,
-    // ✅ working WebSocket base URL (Jackal.js will append /websocket automatically)
-    endpoint: "wss://rpc-jackal.keplr.app",
+    // ✅ Jackal official RPC endpoint
+    endpoint: "https://rpc.jackalprotocol.com",
     chainConfig: {
       chainId: signerChain,
       chainName: "Jackal",
-      rpc: "https://rpc-jackal.keplr.app",
+      rpc: "https://rpc.jackalprotocol.com",
       rest: "https://jackal-api.polkachu.com",
       bip44: { coinType: 118 },
       bech32Config: {
