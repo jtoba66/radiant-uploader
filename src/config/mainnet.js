@@ -5,19 +5,17 @@ export const mainnet = {
   chainId: signerChain,
   enabledChains: [signerChain],
 
-  // ✅ REST endpoints via Netlify proxy
-  queryAddr: "/lcd",
-  restEndpoint: "/lcd",
-
-  // ✅ RPC endpoints
-  txAddr: "/v1",
-  rpcEndpoint: "wss://rpc-jackal.keplr.app", // <-- removed /websocket
+  // ✅ Polkachu REST + RPC (CORS-safe)
+  queryAddr: "https://jackal-api.polkachu.com",
+  restEndpoint: "https://jackal-api.polkachu.com",
+  txAddr: "https://jackal-rpc.polkachu.com",
+  rpcEndpoint: "wss://jackal-rpc.polkachu.com/websocket",
 
   chainConfig: {
     chainId: signerChain,
     chainName: "Jackal",
-    rpc: "/v1",
-    rest: "/lcd",
+    rpc: "https://jackal-rpc.polkachu.com",
+    rest: "https://jackal-api.polkachu.com",
     walletUrlForStaking: "https://wallet.keplr.app/chains/jackal",
     bip44: { coinType: 118 },
     bech32Config: {
@@ -62,12 +60,12 @@ export const mainnet = {
 
   host: {
     chainId: signerChain,
-    endpoint: "wss://rpc-jackal.keplr.app", // <-- no /websocket
+    endpoint: "wss://jackal-rpc.polkachu.com/websocket",
     chainConfig: {
       chainId: signerChain,
       chainName: "Jackal",
-      rpc: "/v1",
-      rest: "/lcd",
+      rpc: "https://jackal-rpc.polkachu.com",
+      rest: "https://jackal-api.polkachu.com",
       bip44: { coinType: 118 },
       bech32Config: {
         bech32PrefixAccAddr: "jkl",
