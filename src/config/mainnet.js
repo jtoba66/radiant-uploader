@@ -1,3 +1,4 @@
+// src/config/mainnet.js
 const signerChain = "jackal-1";
 
 export const mainnet = {
@@ -5,16 +6,18 @@ export const mainnet = {
   chainId: signerChain,
   enabledChains: [signerChain],
 
-  // ✅ Polkachu REST + RPC (CORS-safe)
+  // ✅ Polkachu REST (CORS-safe, verified working)
   queryAddr: "https://jackal-api.polkachu.com",
   restEndpoint: "https://jackal-api.polkachu.com",
-  txAddr: "https://jackal-rpc.polkachu.com",
-  rpcEndpoint: "wss://jackal-rpc.polkachu.com/websocket",
+
+  // ✅ Keplr RPC (WebSocket-capable — no trailing /websocket)
+  txAddr: "https://rpc-jackal.keplr.app",
+  rpcEndpoint: "wss://rpc-jackal.keplr.app",
 
   chainConfig: {
     chainId: signerChain,
     chainName: "Jackal",
-    rpc: "https://jackal-rpc.polkachu.com",
+    rpc: "https://rpc-jackal.keplr.app",
     rest: "https://jackal-api.polkachu.com",
     walletUrlForStaking: "https://wallet.keplr.app/chains/jackal",
     bip44: { coinType: 118 },
@@ -32,8 +35,6 @@ export const mainnet = {
         coinMinimalDenom: "ujkl",
         coinDecimals: 6,
         coinGeckoId: "jackal-protocol",
-        coinImageUrl:
-          "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/jackal/chain.png",
       },
     ],
     feeCurrencies: [
@@ -41,9 +42,6 @@ export const mainnet = {
         coinDenom: "JKL",
         coinMinimalDenom: "ujkl",
         coinDecimals: 6,
-        coinGeckoId: "jackal-protocol",
-        coinImageUrl:
-          "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/jackal/chain.png",
         gasPriceStep: { low: 0.002, average: 0.004, high: 0.02 },
       },
     ],
@@ -51,20 +49,18 @@ export const mainnet = {
       coinDenom: "JKL",
       coinMinimalDenom: "ujkl",
       coinDecimals: 6,
-      coinGeckoId: "jackal-protocol",
-      coinImageUrl:
-        "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/jackal/chain.png",
     },
     features: ["cosmwasm"],
   },
 
   host: {
     chainId: signerChain,
-    endpoint: "wss://jackal-rpc.polkachu.com/websocket",
+    // ✅ working WebSocket base URL (Jackal.js will append /websocket automatically)
+    endpoint: "wss://rpc-jackal.keplr.app",
     chainConfig: {
       chainId: signerChain,
       chainName: "Jackal",
-      rpc: "https://jackal-rpc.polkachu.com",
+      rpc: "https://rpc-jackal.keplr.app",
       rest: "https://jackal-api.polkachu.com",
       bip44: { coinType: 118 },
       bech32Config: {
@@ -76,23 +72,13 @@ export const mainnet = {
         bech32PrefixConsPub: "jklvalconspub",
       },
       currencies: [
-        {
-          coinDenom: "JKL",
-          coinMinimalDenom: "ujkl",
-          coinDecimals: 6,
-          coinGeckoId: "jackal-protocol",
-          coinImageUrl:
-            "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/jackal/chain.png",
-        },
+        { coinDenom: "JKL", coinMinimalDenom: "ujkl", coinDecimals: 6 },
       ],
       feeCurrencies: [
         {
           coinDenom: "JKL",
           coinMinimalDenom: "ujkl",
           coinDecimals: 6,
-          coinGeckoId: "jackal-protocol",
-          coinImageUrl:
-            "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/jackal/chain.png",
           gasPriceStep: { low: 0.002, average: 0.004, high: 0.02 },
         },
       ],
@@ -100,9 +86,6 @@ export const mainnet = {
         coinDenom: "JKL",
         coinMinimalDenom: "ujkl",
         coinDecimals: 6,
-        coinGeckoId: "jackal-protocol",
-        coinImageUrl:
-          "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/jackal/chain.png",
       },
       features: ["cosmwasm"],
     },
