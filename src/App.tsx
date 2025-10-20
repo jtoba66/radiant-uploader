@@ -46,7 +46,7 @@ function App() {
 
   const [data, setData] = useState<FileData[]>([]);
   const [folders, setFolders] = useState<string[]>([]);
-  const [path, setPath] = useState("radiant");
+  const [path, setPath] = useState("Home/radiant");
   const [navigation, setNavigation] = useState<string[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [inDropZone, setInDropZone] = useState(false);
@@ -87,7 +87,7 @@ function App() {
       setJKLAddress(address);
       setJKLBalance(balance);
       setWalletActive(true);
-      await refresh("radiant");
+      await refresh("Home/radiant");
     } catch (err: any) {
       setError(err?.message || "Wallet connection failed.");
     } finally {
@@ -105,7 +105,7 @@ function App() {
     }
   };
 
-  // Load folder contents (FIXED: removed "s/" prefix)
+  // Load folder contents
   const refresh = async (dir: string) => {
     setLoading(true);
     try {
@@ -189,7 +189,6 @@ function App() {
     }
   };
 
-  // FIXED: removed "s/" prefix from createFolders path
   const createMultiFolders = async (names: string[]) => {
     try {
       await createFolders(path, names);
@@ -207,10 +206,10 @@ function App() {
     setLoading(false);
   };
 
-  const backToRootClick = () => refresh("radiant");
+  const backToRootClick = () => refresh("Home/radiant");
   const navigationClick = async (index: number) => {
     const newCrumbs = navigation.slice(0, index + 1);
-    await refresh(newCrumbs.join("/") || "radiant");
+    await refresh(newCrumbs.join("/") || "Home/radiant");
   };
 
   const toggleSeriousMode = (() => {

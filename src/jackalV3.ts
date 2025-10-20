@@ -25,12 +25,24 @@ async function ensureStorageInitialized() {
         console.log("🔑 Full signer enabled");
       }
       
-      // Initialize storage
+      // Initialize storage (creates Home/Shared base structure)
       if (storage.initStorage) {
         await storage.initStorage();
-        storageInitialized = true;
         console.log("🔓 Storage handler initialized");
       }
+      
+      // Create radiant folder if it doesn't exist
+      try {
+        await storage.loadDirectory({ path: "Home/radiant" });
+        console.log("📁 Radiant folder exists");
+      } catch {
+        console.log("📁 Creating radiant folder...");
+        await storage.loadDirectory({ path: "Home" });
+        await storage.createFolders({ names: ["radiant"] });
+        console.log("✅ Radiant folder created");
+      }
+      
+      storageInitialized = true;
     } catch (err: any) {
       // If error is about already being initialized, that's fine
       if (err.message?.includes("already") || err.message?.includes("initialized")) {
