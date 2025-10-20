@@ -4,16 +4,20 @@ export const mainnet = {
   signerChain,
   chainId: signerChain,
   enabledChains: [signerChain],
+
+  // ✅ REST can stay proxied
   queryAddr: "/lcd",
-  txAddr: "/v1",
-  rpcEndpoint: "/v1",
   restEndpoint: "/lcd",
+
+  // ✅ RPC/WebSocket must include protocol
+  txAddr: "https://rpc-jackal.keplr.app",
+  rpcEndpoint: "https://rpc-jackal.keplr.app",
 
   chainConfig: {
     chainId: signerChain,
     chainName: "Jackal",
-    rpc: "/v1",
-    rest: "/lcd",
+    rpc: "https://rpc-jackal.keplr.app", // ✅ full URL
+    rest: "/lcd",                        // ✅ proxied
     walletUrlForStaking: "https://wallet.keplr.app/chains/jackal",
     bip44: { coinType: 118 },
     bech32Config: {
@@ -50,11 +54,11 @@ export const mainnet = {
 
   host: {
     chainId: signerChain,
-    endpoint: "/v1",
+    endpoint: "https://rpc-jackal.keplr.app", // ✅ must include https://
     chainConfig: {
       chainId: signerChain,
       chainName: "Jackal",
-      rpc: "/v1",
+      rpc: "https://rpc-jackal.keplr.app", // ✅ same here
       rest: "/lcd",
       bip44: { coinType: 118 },
       bech32Config: {
