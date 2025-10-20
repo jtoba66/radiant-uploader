@@ -28,7 +28,9 @@ import {
   getBalance,
 } from "./jackalV3";
 
-import { getFilesAsync, truncate } from "./utils";
+import { truncate } from "./utils";
+
+
 
 type FileData = { name: string; fid: string };
 
