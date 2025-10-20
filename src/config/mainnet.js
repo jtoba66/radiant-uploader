@@ -5,19 +5,19 @@ export const mainnet = {
   chainId: signerChain,
   enabledChains: [signerChain],
 
-  // ✅ REST can stay proxied
+  // ✅ REST endpoints via Netlify proxy
   queryAddr: "/lcd",
   restEndpoint: "/lcd",
 
-  // ✅ RPC/WebSocket must include protocol
-  txAddr: "https://rpc-jackal.keplr.app",
-  rpcEndpoint: "https://rpc-jackal.keplr.app",
+  // ✅ RPC endpoints (proxy for HTTP, full URL for WebSocket)
+  txAddr: "/v1",
+  rpcEndpoint: "wss://rpc-jackal.keplr.app/websocket",
 
   chainConfig: {
     chainId: signerChain,
     chainName: "Jackal",
-    rpc: "https://rpc-jackal.keplr.app", // ✅ full URL
-    rest: "/lcd",                        // ✅ proxied
+    rpc: "/v1", // proxied through Netlify (bypasses CORS)
+    rest: "/lcd",
     walletUrlForStaking: "https://wallet.keplr.app/chains/jackal",
     bip44: { coinType: 118 },
     bech32Config: {
@@ -34,6 +34,8 @@ export const mainnet = {
         coinMinimalDenom: "ujkl",
         coinDecimals: 6,
         coinGeckoId: "jackal-protocol",
+        coinImageUrl:
+          "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/jackal/chain.png",
       },
     ],
     feeCurrencies: [
@@ -41,6 +43,9 @@ export const mainnet = {
         coinDenom: "JKL",
         coinMinimalDenom: "ujkl",
         coinDecimals: 6,
+        coinGeckoId: "jackal-protocol",
+        coinImageUrl:
+          "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/jackal/chain.png",
         gasPriceStep: { low: 0.002, average: 0.004, high: 0.02 },
       },
     ],
@@ -48,17 +53,21 @@ export const mainnet = {
       coinDenom: "JKL",
       coinMinimalDenom: "ujkl",
       coinDecimals: 6,
+      coinGeckoId: "jackal-protocol",
+      coinImageUrl:
+        "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/jackal/chain.png",
     },
     features: ["cosmwasm"],
   },
 
   host: {
     chainId: signerChain,
-    endpoint: "https://rpc-jackal.keplr.app", // ✅ must include https://
+    // ✅ WebSocket endpoint for Jackal.js internals
+    endpoint: "wss://rpc-jackal.keplr.app/websocket",
     chainConfig: {
       chainId: signerChain,
       chainName: "Jackal",
-      rpc: "https://rpc-jackal.keplr.app", // ✅ same here
+      rpc: "/v1",
       rest: "/lcd",
       bip44: { coinType: 118 },
       bech32Config: {
@@ -70,13 +79,23 @@ export const mainnet = {
         bech32PrefixConsPub: "jklvalconspub",
       },
       currencies: [
-        { coinDenom: "JKL", coinMinimalDenom: "ujkl", coinDecimals: 6 },
+        {
+          coinDenom: "JKL",
+          coinMinimalDenom: "ujkl",
+          coinDecimals: 6,
+          coinGeckoId: "jackal-protocol",
+          coinImageUrl:
+            "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/jackal/chain.png",
+        },
       ],
       feeCurrencies: [
         {
           coinDenom: "JKL",
           coinMinimalDenom: "ujkl",
           coinDecimals: 6,
+          coinGeckoId: "jackal-protocol",
+          coinImageUrl:
+            "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/jackal/chain.png",
           gasPriceStep: { low: 0.002, average: 0.004, high: 0.02 },
         },
       ],
@@ -84,6 +103,9 @@ export const mainnet = {
         coinDenom: "JKL",
         coinMinimalDenom: "ujkl",
         coinDecimals: 6,
+        coinGeckoId: "jackal-protocol",
+        coinImageUrl:
+          "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/jackal/chain.png",
       },
       features: ["cosmwasm"],
     },
