@@ -30,7 +30,17 @@ import {
 
 import { truncate } from "./utils";
 
-type FileData = { name: string; fid: string; ulid: string };
+// 🔥 GATEWAY CONFIGURATION
+// For local development: http://localhost:3001
+// For production: https://gateway.radiant.app
+const GATEWAY_URL = "https://gateway.lazybird.io";
+
+type FileData = { 
+  name: string; 
+  fid: string; 
+  ulid: string;
+  cid: string;  // IPFS CID for gateway access
+};
 
 function App() {
   const [serious, setSerious] = useState(false);
@@ -111,15 +121,27 @@ function App() {
     try {
       const { folders, fileMetas } = await listFolder(dir);
       setFolders(folders || []);
-      // Use file metadata to get ULIDs
-      setData((fileMetas || []).map((meta: any) => ({ 
-        name: meta.fileMeta.name, 
-        fid: meta.fileMeta.name,
-        ulid: meta.ulid 
-      })));
+      
+      // Debug: Log fileMetas to see structure
+      console.log('File metas:', fileMetas);
+      
+      // Map fileMetas to include CID
+      setData((fileMetas || []).map((meta: any) => {
+        // Try to extract CID from various possible locations
+        const cid = meta.cid || meta.fileMeta?.cid || meta.tracking?.cid || '';
+        
+        return { 
+          name: meta.fileMeta?.name || meta.name || 'unknown',
+          fid: meta.fileMeta?.name || meta.name || 'unknown',
+          ulid: meta.ulid || '',
+          cid: cid
+        };
+      }));
+      
       setPath(dir);
       setNavigation(dir.split("/").filter(Boolean));
-    } catch {
+    } catch (err) {
+      console.error('Refresh error:', err);
       setError("Could not load folder contents.");
     } finally {
       setLoading(false);
@@ -166,13 +188,31 @@ function App() {
     handleUpload(selectedFiles);
   };
 
-  const copyToClipboard = (fileName: string, ulid: string) => {
-    const link = `https://jackal.link/u/${ulid}`;
+  // 🔥 UPDATED: Use CID and gateway URL
+  const copyToClipboard = (fileName: string, ulid: string, cid: string) => {
+    // Use CID if available, fallback to ULID
+    const identifier = cid || ulid;
+    if (!identifier) {
+      setError("File identifier not found");
+      return;
+    }
+    
+    const link = `${GATEWAY_URL}/file/${identifier}?name=${encodeURIComponent(fileName)}`;
     navigator.clipboard.writeText(link);
+    console.log('Copied link:', link);
   };
 
-  const openFile = (fileName: string, ulid: string) => {
-    const link = `https://jackal.link/u/${ulid}`;
+  // 🔥 UPDATED: Use CID and gateway URL
+  const openFile = (fileName: string, ulid: string, cid: string) => {
+    // Use CID if available, fallback to ULID
+    const identifier = cid || ulid;
+    if (!identifier) {
+      setError("File identifier not found");
+      return;
+    }
+    
+    const link = `${GATEWAY_URL}/file/${identifier}?name=${encodeURIComponent(fileName)}`;
+    console.log('Opening file:', link);
     const w = window.open(link, "_blank");
     if (w) w.focus();
   };
@@ -472,8 +512,8 @@ function App() {
                   serious={serious}
                   key={i}
                   file={e}
-                  copyToClipboard={() => copyToClipboard(e.name, e.ulid)}
-                  openFile={() => openFile(e.name, e.ulid)}
+                  copyToClipboard={() => copyToClipboard(e.name, e.ulid, e.cid)}
+                  openFile={() => openFile(e.name, e.ulid, e.cid)}
                 />
               ))}
           </div>
