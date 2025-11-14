@@ -1,4 +1,4 @@
-// src/App.tsx
+// src/App.tsx (BACKWARD COMPATIBLE VERSION - Adds merkleHex support)
 import React, { useEffect, useRef, useState } from "react";
 import "./App.css";
 
@@ -30,16 +30,18 @@ import {
 
 import { truncate } from "./utils";
 
-// 🔥 GATEWAY CONFIGURATION
+// ðŸ”¥ GATEWAY CONFIGURATION
 // For local development: http://localhost:3001
-// For production: https://gateway.radiant.app
-const GATEWAY_URL = "https://gateway.lazybird.io";
+// For production: https://gateway.lazybird.io
+const GATEWAY_URL = "http://localhost:3001";
 
+// âœ… BACKWARD COMPATIBLE: Added merkleHex but kept everything else
 type FileData = { 
   name: string; 
   fid: string; 
   ulid: string;
-  cid: string;  // IPFS CID for gateway access
+  cid: string;       // âœ… Kept for backward compatibility
+  merkleHex: string; // âœ… Added for gateway support
 };
 
 function App() {
@@ -115,7 +117,7 @@ function App() {
     }
   };
 
-  // Load folder contents
+  // âœ… BACKWARD COMPATIBLE: Extracts both cid and merkleHex
   const refresh = async (dir: string) => {
     setLoading(true);
     try {
@@ -123,18 +125,30 @@ function App() {
       setFolders(folders || []);
       
       // Debug: Log fileMetas to see structure
-      console.log('File metas:', fileMetas);
+      console.log('File metas from Jackal:', fileMetas);
       
-      // Map fileMetas to include CID
+      // âœ… Extract BOTH cid (old) and merkleHex (new) for full compatibility
       setData((fileMetas || []).map((meta: any) => {
-        // Try to extract CID from various possible locations
+        // Extract CID (keep for backward compatibility)
         const cid = meta.cid || meta.fileMeta?.cid || meta.tracking?.cid || '';
         
+        // Extract merkleHex (new - for gateway)
+        const merkleHex = meta.merkleHex || meta.merkle || '';
+        
+        // Get filename
+        const fileName = meta.fileMeta?.name || meta.name || 'unknown';
+        
+        // Debug log
+        console.log(`File: ${fileName}`);
+        console.log(`  - CID: ${cid.substring(0, 16)}...`);
+        console.log(`  - MerkleHex: ${merkleHex.substring(0, 16)}...`);
+        
         return { 
-          name: meta.fileMeta?.name || meta.name || 'unknown',
-          fid: meta.fileMeta?.name || meta.name || 'unknown',
+          name: fileName,
+          fid: fileName,
           ulid: meta.ulid || '',
-          cid: cid
+          cid: cid,           // âœ… Keep old identifier
+          merkleHex: merkleHex // âœ… Add new identifier
         };
       }));
       
@@ -188,31 +202,42 @@ function App() {
     handleUpload(selectedFiles);
   };
 
-  // 🔥 UPDATED: Use CID and gateway URL
-  const copyToClipboard = (fileName: string, ulid: string, cid: string) => {
-    // Use CID if available, fallback to ULID
-    const identifier = cid || ulid;
+  // âœ… BACKWARD COMPATIBLE: Accepts 4 parameters but merkleHex is optional
+  // Prefers merkleHex over cid for better gateway performance
+  const copyToClipboard = (fileName: string, ulid: string, cid: string, merkleHex?: string) => {
+    // Use merkleHex if available (better performance), fallback to cid
+    const identifier = merkleHex || cid;
+    
     if (!identifier) {
       setError("File identifier not found");
+      console.error('No identifier found - cid:', cid, 'merkleHex:', merkleHex);
       return;
     }
     
     const link = `${GATEWAY_URL}/file/${identifier}?name=${encodeURIComponent(fileName)}`;
     navigator.clipboard.writeText(link);
-    console.log('Copied link:', link);
+    
+    console.log('âœ… Copied link:', link);
+    console.log('   Using identifier:', merkleHex ? 'merkleHex' : 'cid');
   };
 
-  // 🔥 UPDATED: Use CID and gateway URL
-  const openFile = (fileName: string, ulid: string, cid: string) => {
-    // Use CID if available, fallback to ULID
-    const identifier = cid || ulid;
+  // âœ… BACKWARD COMPATIBLE: Accepts 4 parameters but merkleHex is optional
+  // Prefers merkleHex over cid for better gateway performance
+  const openFile = (fileName: string, ulid: string, cid: string, merkleHex?: string) => {
+    // Use merkleHex if available (better performance), fallback to cid
+    const identifier = merkleHex || cid;
+    
     if (!identifier) {
       setError("File identifier not found");
+      console.error('No identifier found - cid:', cid, 'merkleHex:', merkleHex);
       return;
     }
     
     const link = `${GATEWAY_URL}/file/${identifier}?name=${encodeURIComponent(fileName)}`;
-    console.log('Opening file:', link);
+    
+    console.log('ðŸŒ Opening file:', link);
+    console.log('   Using identifier:', merkleHex ? 'merkleHex' : 'cid');
+    
     const w = window.open(link, "_blank");
     if (w) w.focus();
   };
@@ -293,7 +318,7 @@ function App() {
             <h1>Welcome to Radiant</h1>
             <p>
               <span className="italics">
-                Decentralized file publishing — enduring, secure, and truly yours.
+                Decentralized file publishing â€” enduring, secure, and truly yours.
               </span>
             </p>
             <ul>
@@ -418,7 +443,7 @@ function App() {
                 <span
                   className={cost === 0 ? "" : "rainbow rainbow_text_animated"}
                 >
-                  ≈ {cost.toFixed(2)} JKL
+                  â‰ˆ {cost.toFixed(2)} JKL
                 </span>
               </span>
               <input
@@ -506,14 +531,15 @@ function App() {
               </div>
             )}
 
+            {/* âœ… BACKWARD COMPATIBLE: Now passes 4 parameters (merkleHex is last) */}
             {!loading &&
               data.map((e, i) => (
                 <EachFile
                   serious={serious}
                   key={i}
                   file={e}
-                  copyToClipboard={() => copyToClipboard(e.name, e.ulid, e.cid)}
-                  openFile={() => openFile(e.name, e.ulid, e.cid)}
+                  copyToClipboard={() => copyToClipboard(e.name, e.ulid, e.cid, e.merkleHex)}
+                  openFile={() => openFile(e.name, e.ulid, e.cid, e.merkleHex)}
                 />
               ))}
           </div>
