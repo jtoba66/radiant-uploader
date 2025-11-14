@@ -33,7 +33,7 @@ import { truncate } from "./utils";
 // ðŸ”¥ GATEWAY CONFIGURATION
 // For local development: http://localhost:3001
 // For production: https://gateway.lazybird.io
-const GATEWAY_URL = "http://localhost:3001";
+const GATEWAY_URL = "https://gateway.lazybird.io";
 
 // âœ… BACKWARD COMPATIBLE: Added merkleHex but kept everything else
 type FileData = { 
